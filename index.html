@@ -1265,7 +1265,7 @@ const ALERT_DAYS = 2; // この日数以上経過でアラート
 // ============================================================
 // ▼ Google Apps Script の Web App URL をここに貼り付ける ▼
 // ============================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzG9p1i6EoMhI3IkOJDnfK7u5sWhWPzJdzApmlSB_9fw1VnkyYNlQL4z_oLmOVJmpM/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzoPip5yxHHSnbEaKqyCdKQMuP-bPmD_vnlVWMZ31RcEth3vyS6cA7ZVQla8xyGJaIk/exec';
 // ============================================================
 
 let currentDay=1, currentMode='staff';
@@ -1559,33 +1559,18 @@ function submitStaff(){
 
 async function generateAIDraft(){
   state[currentDay]._generating=true;state[currentDay].aiDraft='';renderMain();
-  const day=DAYS[currentDay],s=state[currentDay];
-  const prompt=`あなたはMMG（MIRAI MEDICAL GROUP）の研修担当マネージャーです。
-以下のスタッフが研修日めくりノートの Day ${currentDay}「${day.keyMessage}」を読み、記入しました。
-
-【スタッフ情報】
-氏名：${profile.name}
-クリニック：${profile.clinic}
-職種：${profile.job}
-
-【感じたこと・考えたこと】
-${s.thought||'（未記入）'}
-
-【本日の日報・気付き・改善提案】
-${s.report||'（未記入）'}
-
-このスタッフへの上長フィードバックを200字程度で書いてください。
-- 冒頭に「${profile.name}さん、」と名前で呼びかける
-- 職種（${profile.job}）の現場感に触れて具体的に肯定する
-- Dayのテーマと紐づけて成長の方向性を示す
-- 心理的安全性を重視し、対話的な語りかけで
-- 最後に次のDayへの期待や問いかけで締める
-- 敬語（ですます調）で書く
-フィードバック本文のみ出力してください。`;
+  const s=state[currentDay];
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
-    const data=await res.json();
-    state[currentDay].aiDraft=(data.content?.map(b=>b.text||'').join('')||'').trim();
+    const res=await gasPost({
+      action:'generateAI',
+      clinic:profile.clinic, job:profile.job, name:profile.name,
+      day:currentDay, thought:s.thought, report:s.report
+    });
+    if(res.ok && res.draft){
+      state[currentDay].aiDraft=res.draft;
+    } else {
+      state[currentDay].aiDraft='AIの接続に問題がありました。直接フィードバックを入力してください。';
+    }
   }catch(e){state[currentDay].aiDraft='AIの接続に問題がありました。直接フィードバックを入力してください。';}
   state[currentDay]._generating=false;renderMain();
   if(state[currentDay].aiDraft && state[currentDay].aiDraft !== 'AIの接続に問題がありました。直接フィードバックを入力してください。') {
@@ -1730,7 +1715,7 @@ function persistClear() {
 
 // GAS への送信ラッパー
 async function gasPost(payload) {
-  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzG9p1i6EoMhI3IkOJDnfK7u5sWhWPzJdzApmlSB_9fw1VnkyYNlQL4z_oLmOVJmpM/exec') {
+  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzoPip5yxHHSnbEaKqyCdKQMuP-bPmD_vnlVWMZ31RcEth3vyS6cA7ZVQla8xyGJaIk/exec') {
     // GAS未設定時はlocalStorage fallback
     try { localStorage.setItem('mmg_state', JSON.stringify(state)); } catch(e) {}
     return { ok: true, offline: true };
@@ -1750,7 +1735,7 @@ async function gasPost(payload) {
 
 // GAS からデータ取得
 async function gasLoad(clinic, name) {
-  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzG9p1i6EoMhI3IkOJDnfK7u5sWhWPzJdzApmlSB_9fw1VnkyYNlQL4z_oLmOVJmpM/exec') return null;
+  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzoPip5yxHHSnbEaKqyCdKQMuP-bPmD_vnlVWMZ31RcEth3vyS6cA7ZVQla8xyGJaIk/exec') return null;
   try {
     const url = `${GAS_URL}?clinic=${encodeURIComponent(clinic)}&name=${encodeURIComponent(name)}`;
     const res = await fetch(url);
