@@ -1516,18 +1516,12 @@ function renderManagerView(){
           ${s.status==='done'?`<div class="done-feedback"><div class="done-label">✓ 送信済みのフィードバック</div><div class="done-text">${s.managerFeedback}</div></div>`:`
           <div class="manager-panel">
             <div class="manager-panel-title">▼ 上長フィードバックパネル</div>
-            ${!s.aiDraft&&!s._generating?`<div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;">AIが記入内容を分析してフィードバック草案を生成します。確認・編集してからGOを出してください。</div>
-            <button class="btn btn-outline" onclick="generateAIDraft()" style="background:white;border-color:#c4b5fd;color:#7c3aed;">✦ AIフィードバック草案を生成</button>`:''}
-            ${s._generating?`<div class="ai-loading"><div class="spinner"></div><span>${profile.name}さんの記入内容を分析中…</span></div>`:''}
-            ${s.aiDraft&&!s._generating?`
-              <div class="ai-draft-box"><div class="ai-draft-label">✦ AI 生成フィードバック草案</div>
-              <div style="font-size:12px;color:var(--text-soft);">このまま送るか、下の欄で編集してください。</div></div>
-              <div class="write-label-bar">上長フィードバック（編集可）</div>
-              <textarea class="feedback-input" id="managerFeedbackInput">${s.aiDraft}</textarea>
-              <div class="btn-row">
-                <button class="btn btn-outline" onclick="generateAIDraft()" style="font-size:12px;padding:7px 14px;">✦ 再生成</button>
-                <button class="btn btn-green" onclick="sendFeedback()">✓ GO — ${profile.name}さんに送信</button>
-              </div>`:''}
+            <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;">スタッフの記入内容を読んで、フィードバックを入力してGOを押してください。</div>
+            <div class="write-label-bar">上長フィードバック</div>
+            <textarea class="feedback-input" id="managerFeedbackInput" placeholder="${profile.name}さんへのフィードバックを入力してください…"></textarea>
+            <div class="btn-row">
+              <button class="btn btn-green" onclick="sendFeedback()">✓ GO — ${profile.name}さんに送信</button>
+            </div>
           </div>`}
         </div>
       </div>
