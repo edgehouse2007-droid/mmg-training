@@ -413,6 +413,22 @@ textarea.feedback-input:focus{border-color:var(--gold);}
 /* Summary alert strip in sidebar */
 .sidebar-alert-strip{background:#fdecea;border-top:1px solid #f5c1bc;padding:8px 14px;font-size:10px;color:#b83228;font-weight:600;display:flex;align-items:center;gap:5px;margin-top:4px;}
 
+
+/* ── MOBILE ── */
+.sidebar-toggle{display:none;background:var(--teal-deep);color:white;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+@media(max-width:640px){
+  .sidebar-toggle{display:inline-flex;align-items:center;gap:5px;}
+  .app{flex-direction:column;}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);padding:8px 0;display:none;max-height:220px;overflow-y:auto;}
+  .sidebar.open{display:block;}
+  .main{padding:14px 16px;}
+  .day-header{padding:12px 16px;}
+  .day-num{font-size:26px!important;}
+  .day-body{padding:14px 16px;}
+  .topbar{padding:0 12px;height:48px;}
+  .staff-chip-meta{display:none;}
+}
+
 </style>
 
 <!-- EMAIL OVERLAY -->
@@ -683,7 +699,10 @@ textarea.feedback-input:focus{border-color:var(--gold);}
     <span>📋 <strong>運用のヒント：</strong>スタッフはDayごとに記入・提出 → 上長がAIフィードバック草案を確認・編集してGO → スタッフにメールで返却。<a href="#" onclick="document.getElementById('opNoticeBanner').style.display='none';return false;" style="color:rgba(255,255,255,0.6);margin-left:8px;font-size:10px;">閉じる ×</a></span>
   </div>
   <div class="app">
-    <div class="sidebar">
+    <div style="display:none;padding:8px 16px;border-bottom:1px solid var(--border);background:white;" id="mobileMenuBar" class="mobile-menu-bar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">☰ 目次</button>
+    </div>
+    <div class="sidebar" id="sidebarEl">
       <div class="sidebar-section-label">Chapter 1 — Basic Stance</div>
       <div class="sidebar-item" onclick="selectDay(1)" id="sideDay1">
         <div class="sidebar-day">01</div>
@@ -1612,6 +1631,19 @@ MIRAI MEDICAL GROUP 研修システム`;
 }
 
 function closeEmail(){document.getElementById('emailOverlay').classList.remove('show');}
+
+function toggleSidebar(){
+  const sb = document.getElementById('sidebarEl');
+  sb.classList.toggle('open');
+}
+// Show mobile menu bar on small screens
+function checkMobile(){
+  const bar = document.getElementById('mobileMenuBar');
+  if(bar) bar.style.display = window.innerWidth <= 640 ? 'block' : 'none';
+}
+window.addEventListener('resize', checkMobile);
+window.addEventListener('DOMContentLoaded', checkMobile);
+
 function nextDay(){if(currentDay<77)selectDay(currentDay+1);}
 
 async function reloadFromSheet() {
