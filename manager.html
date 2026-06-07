@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMG 研修ノート｜上長管理画面</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#1a7a8a;--teal-deep:#0e5260;--teal-light:#e8f4f6;--gold:#b8964a;--gold-light:#f5ecd6;--text:#1e2630;--text-soft:#4a5568;--bg:#f5f7f8;--white:#ffffff;--border:#d4e4e8;--green:#2d7d4e;--green-light:#e8f5ee;--amber:#c07a1a;--amber-light:#fef3e0;--red:#c0392b;--red-light:#fdecea;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.8;min-height:100vh;}
+.topbar{background:var(--teal-deep);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;position:sticky;top:0;z-index:100;}
+.topbar-logo{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.06em;}
+.topbar-badge{background:var(--gold);color:white;font-size:10px;font-weight:600;padding:3px 12px;border-radius:20px;font-family:'Inter',sans-serif;letter-spacing:0.08em;}
+.main{max-width:820px;margin:0 auto;padding:24px 20px;}
+.page-title{font-size:20px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.page-sub{font-size:12px;color:var(--text-soft);margin-bottom:20px;}
+/* STAFF TABS */
+.staff-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.staff-tab{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:white;font-size:12px;cursor:pointer;transition:all 0.15s;color:var(--text-soft);}
+.staff-tab.active{background:var(--teal-deep);color:white;border-color:var(--teal-deep);}
+/* LIST */
+.day-list{display:flex;flex-direction:column;gap:8px;}
+.day-item{background:white;border-radius:8px;border:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color 0.15s;}
+.day-item:hover{border-color:var(--teal);}
+.day-item.pending{border-left:3px solid #3b82f6;}
+.day-num{font-family:'Inter',sans-serif;font-size:20px;font-weight:300;color:var(--teal-deep);min-width:34px;}
+.day-info{flex:1;min-width:0;}
+.day-km{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.day-meta{font-size:11px;color:var(--text-soft);margin-top:2px;}
+.status-tag{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+.tag-pending{background:#eff6ff;color:#1d4ed8;}
+.tag-done{background:var(--green-light);color:var(--green);}
+.tag-none{background:#f0f4f5;color:#9ca3af;}
+/* DETAIL */
+.detail-card{background:white;border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.detail-header{background:var(--teal-deep);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.detail-day{font-family:'Inter',sans-serif;font-size:28px;font-weight:200;color:white;}
+.detail-km{color:rgba(255,255,255,0.85);font-size:13px;margin-top:4px;}
+.detail-body{padding:18px 20px;}
+.field-label{font-size:10px;font-weight:700;color:var(--teal-deep);background:var(--teal-light);padding:4px 10px;border-radius:4px;display:block;margin-bottom:6px;letter-spacing:0.08em;text-transform:uppercase;}
+.field-content{font-size:13px;color:var(--text-soft);background:#fafcfd;border:1px solid var(--border);border-radius:6px;padding:10px 12px;line-height:1.8;min-height:50px;margin-bottom:12px;white-space:pre-wrap;}
+textarea.feedback-input{width:100%;border:1px solid #e8d5a0;border-radius:6px;padding:10px 12px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--text);resize:vertical;min-height:100px;background:white;outline:none;transition:border-color 0.2s;}
+textarea.feedback-input:focus{border-color:var(--gold);}
+.btn-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;}
+.btn-green{background:var(--green);color:white;}.btn-green:hover{background:#1e5c38;}
+.btn-outline{background:white;color:var(--text-soft);border:1px solid var(--border);}.btn-outline:hover{border-color:var(--teal);color:var(--teal);}
+.done-box{background:var(--green-light);border:1px solid #a7d7bb;border-radius:8px;padding:12px 14px;}
+.done-label{font-size:10px;font-weight:700;color:var(--green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+.done-text{font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text-soft);cursor:pointer;margin-bottom:14px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:white;transition:all 0.15s;}
+.back-btn:hover{border-color:var(--teal);color:var(--teal);}
+.loading{text-align:center;padding:40px;color:var(--text-soft);font-size:13px;}
+.alert-banner{border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;font-size:12px;}
+.alert-danger{background:var(--red-light);border:1px solid #f5c1bc;color:var(--red);}
+.save-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--teal-deep);color:white;font-size:11px;padding:7px 18px;border-radius:20px;z-index:999;opacity:0;transition:opacity 0.4s;pointer-events:none;font-family:'Inter',sans-serif;}
+@media(max-width:600px){.main{padding:16px 14px;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="topbar-logo">MMG</span>
+    <span style="opacity:0.4;font-size:12px;">|</span>
+    <span style="font-size:12px;opacity:0.75;">研修ノート 上長管理画面</span>
+  </div>
+  <div class="topbar-badge">上長モード</div>
+</div>
+
+<div class="main" id="mainArea">
+  <div class="loading">データを読み込み中…</div>
+</div>
+<div class="save-toast" id="saveToast"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzoPip5yxHHSnbEaKqyCdKQMuP-bPmD_vnlVWMZ31RcEth3vyS6cA7ZVQla8xyGJaIk/exec';
+const DAYS={
+  1:{keyMessage:'当社の理念「みらい永劫、持続可能な医療の実践」を常に心に刻む',chapter:'Basic Stance'},
+  2:{keyMessage:'はじめの３ヶ月は死に物狂いで没頭せよ、そして少なくとも５年は続けよ',chapter:'Basic Stance'},
+  3:{keyMessage:'変化を恐れるな、成長なき企業は淘汰される',chapter:'Basic Stance'},
+  4:{keyMessage:'主体性を持て。「誰かがやる」ではなく「私がやる」',chapter:'Basic Stance'},
+  5:{keyMessage:'できない理由を探すな、できる方法を考えろ',chapter:'Basic Stance'},
+  6:{keyMessage:'医療も経営だ。利益なくして理念なし',chapter:'Basic Stance'},
+  7:{keyMessage:'約束・ルールを守る',chapter:'Basic Stance'},
+  8:{keyMessage:'情けは味方、仇は敵なり。因果応報',chapter:'Basic Stance'},
+  9:{keyMessage:'事業は人なり。職場は人を育てる場である',chapter:'Basic Stance'},
+  10:{keyMessage:'職種・給与の理解',chapter:'Basic Stance'},
+  11:{keyMessage:'誇り高き「町医者」であれ',chapter:'Basic Stance'},
+  12:{keyMessage:'自分の家族を診るように——すべての思考と行動の根源はこの5文字「じぶんごと」',chapter:'Basic Stance'},
+  13:{keyMessage:'みらいの自分とこどもたちのために今できること',chapter:'Basic Stance'},
+  14:{keyMessage:'グループの強みと現在の課題',chapter:'Team Building'},
+  15:{keyMessage:'全ては仕組み化（組織の自走）',chapter:'Team Building'},
+  16:{keyMessage:'仕組み化の具体的な実践',chapter:'Team Building'},
+  17:{keyMessage:'属人性を排除せよ。「あの人しか知らない、できない」をなくす',chapter:'Team Building'},
+  18:{keyMessage:'全ての患者様をファン化させる',chapter:'Team Building'},
+  19:{keyMessage:'マニュアルを作る意義',chapter:'Team Building'},
+  20:{keyMessage:'新人教育の仕組み（OJT・プリセプターは大切）',chapter:'Team Building'},
+  21:{keyMessage:'早期離職のボトルネック解消',chapter:'Team Building'},
+  22:{keyMessage:'「集合天才」をつくる',chapter:'Team Building'},
+  23:{keyMessage:'サッカーチームのように役割を全うせよ',chapter:'Team Building'},
+  24:{keyMessage:'2:6:2の法則を理解せよ',chapter:'Team Building'},
+  25:{keyMessage:'リーダーは「労働組合長」になるな',chapter:'Team Building'},
+  26:{keyMessage:'やってみせ、言って聞かせて、させてみせ',chapter:'Team Building'},
+  27:{keyMessage:'船底に穴を開ける者を見逃すな',chapter:'Team Building'},
+  28:{keyMessage:'環境整備の必要性',chapter:'Team Building'},
+  29:{keyMessage:'環境整備の叩き台',chapter:'Team Building'},
+  30:{keyMessage:'労働力の流動化で「暇」をなくす',chapter:'Team Building'},
+  31:{keyMessage:'TTP：成功例を徹底的にパクれ',chapter:'Team Building'},
+  32:{keyMessage:'アメーバ経営：小集団で採算をとる',chapter:'Team Building'},
+  33:{keyMessage:'情報の共有・ホウレンソウ',chapter:'Communication'},
+  34:{keyMessage:'朝礼の目的',chapter:'Communication'},
+  35:{keyMessage:'口コミの逆を目指せ',chapter:'Communication'},
+  36:{keyMessage:'口コミは最良の目安箱',chapter:'Communication'},
+  37:{keyMessage:'期待との乖離がクレームを生む',chapter:'Communication'},
+  38:{keyMessage:'効率化で生まれた時間を、患者様へ',chapter:'Communication'},
+  39:{keyMessage:'「受付対応が最悪」と言わせない',chapter:'Communication'},
+  40:{keyMessage:'言いにくいことこそ、トーク技術（台本）で',chapter:'Communication'},
+  41:{keyMessage:'医師の個体差と対応',chapter:'Communication'},
+  42:{keyMessage:'医師もチームの一員。医師の「いいなり」や「特別扱い」はしなくていい',chapter:'Communication'},
+  43:{keyMessage:'ルールで医師をコントロールせよ',chapter:'Communication'},
+  44:{keyMessage:'待ち時間は「謝罪」ではなく「気配り」で埋める',chapter:'Communication'},
+  45:{keyMessage:'アンケートで「隠れた声」を拾う',chapter:'Communication'},
+  46:{keyMessage:'クレド（信条）を体現せよ',chapter:'Communication'},
+  47:{keyMessage:'2026年の課題は「収益の最大化」',chapter:'Strategy & KPI'},
+  48:{keyMessage:'LTV（顧客生涯価値）を高めよ',chapter:'Strategy & KPI'},
+  49:{keyMessage:'勝利の方程式：通院期間 × 診療単価 × 来院頻度',chapter:'Strategy & KPI'},
+  50:{keyMessage:'「3ヶ月処方」はLTVの損失である',chapter:'Strategy & KPI'},
+  51:{keyMessage:'攻めの提案「1ヶ月後に確認させてください」',chapter:'Strategy & KPI'},
+  52:{keyMessage:'サブスクを強化せよ',chapter:'Strategy & KPI'},
+  53:{keyMessage:'チャンスを逃すな、アップセルの提案',chapter:'Strategy & KPI'},
+  54:{keyMessage:'減収は罪である',chapter:'Strategy & KPI'},
+  55:{keyMessage:'増益の結果が、ボーナスと昇給の原資となる',chapter:'Strategy & KPI'},
+  56:{keyMessage:'数字は絶対的なものさし',chapter:'Strategy & KPI'},
+  57:{keyMessage:'原価を見直せ。コスト意識を持つ',chapter:'Strategy & KPI'},
+  58:{keyMessage:'PDCAを回せ。日報はそのためにある',chapter:'Strategy & KPI'},
+  59:{keyMessage:'期限と約束を守る。それがプロの仕事',chapter:'Strategy & KPI'},
+  60:{keyMessage:'現在の数値を即答できるか？',chapter:'Strategy & KPI'},
+  61:{keyMessage:'時間帯予約のご案内、運用ルールを守る',chapter:'Strategy & KPI'},
+  62:{keyMessage:'目標未達なら、即座に対策を',chapter:'Strategy & KPI'},
+  63:{keyMessage:'ドミナント戦略：面で地域を制圧する',chapter:'Future & Innovation'},
+  64:{keyMessage:'コアクリニック ＋ 在宅クリニック',chapter:'Future & Innovation'},
+  65:{keyMessage:'在宅診療のセントラル化',chapter:'Future & Innovation'},
+  66:{keyMessage:'ピンピンコロリを支えるテストステロン療法',chapter:'Future & Innovation'},
+  67:{keyMessage:'テストステロン療法について',chapter:'Future & Innovation'},
+  68:{keyMessage:'SAS（睡眠時無呼吸症候群）の取り組み',chapter:'Future & Innovation'},
+  69:{keyMessage:'メンズヘルス・フェムテックへの挑戦',chapter:'Future & Innovation'},
+  70:{keyMessage:'町医者を守るM&A戦略',chapter:'Future & Innovation'},
+  71:{keyMessage:'医療・介護・保育の課題を解決する',chapter:'Future & Innovation'},
+  72:{keyMessage:'100院、そして1000院へ',chapter:'Future & Innovation'},
+  73:{keyMessage:'AIとのつきあいかた',chapter:'Future & Innovation'},
+  74:{keyMessage:'人材採用：育つ土壌と水質管理',chapter:'Future & Innovation'},
+  75:{keyMessage:'DX化で業務をスリムに',chapter:'Future & Innovation'},
+  76:{keyMessage:'３人の石工——あなたはどの石工ですか？',chapter:'Future & Innovation'},
+  77:{keyMessage:'未来は自分たちの手で創る',chapter:'Future & Innovation'},
+};
+
+let allData = {};   // key -> record
+let staffList = [];   // distinct staff names
+let currentStaff = null;
+let currentView = 'list'; // 'list' | 'detail'
+let currentKey = null;
+
+// ── LOAD ──────────────────────────────────────────────────────
+async function loadAll() {
+  try {
+    const res = await fetch(`${GAS_URL}?mode=manager`);
+    const json = await res.json();
+    if (json.ok) {
+      allData = json.data || {};
+      // Build staff list
+      const names = {};
+      for (const key of Object.keys(allData)) {
+        const r = allData[key];
+        const id = r.clinic + '__' + r.name;
+        if (!names[id]) names[id] = { clinic: r.clinic, job: r.job, name: r.name, email: r.email };
+      }
+      staffList = Object.values(names);
+      if (staffList.length > 0) {
+        currentStaff = staffList[0].name;
+      }
+      render();
+    }
+  } catch(e) {
+    document.getElementById('mainArea').innerHTML = '<div class="loading">データの取得に失敗しました。ページを再読み込みしてください。</div>';
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function render() {
+  if (currentView === 'detail') renderDetail();
+  else renderList();
+}
+
+function renderList() {
+  const main = document.getElementById('mainArea');
+  // Filter records for currentStaff
+  const staffRecords = Object.values(allData).filter(r => r.name === currentStaff);
+  // Count pending
+  const pendingCount = staffRecords.filter(r => r.status === 'pending').length;
+  // Alert
+  const alertHTML = pendingCount > 0
+    ? `<div class="alert-banner alert-danger">⚠️ <strong>フィードバック待ち ${pendingCount}件</strong>　提出から2日以上経過している可能性があります。早めに返却してください。</div>`
+    : '';
+
+  // Staff tabs
+  const tabs = staffList.map(s =>
+    `<div class="staff-tab ${s.name===currentStaff?'active':''}" onclick="selectStaff('${s.name}')">${s.name}<br><span style="font-size:10px;opacity:0.7;">${s.clinic}</span></div>`
+  ).join('');
+
+  // Day list
+  const rows = staffRecords
+    .sort((a,b) => a.day - b.day)
+    .map(r => {
+      const d = DAYS[r.day] || {};
+      const tc = r.status==='pending'?'tag-pending':r.status==='done'?'tag-done':'tag-none';
+      const tt = r.status==='pending'?'要フィードバック':r.status==='done'?'返却済':'未提出';
+      const cls = r.status==='pending'?' pending':'';
+      return `<div class="day-item${cls}" onclick="openDetail('${r.clinic}_${r.name}_day${r.day}')">
+        <div class="day-num">${String(r.day).padStart(2,'0')}</div>
+        <div class="day-info">
+          <div class="day-km">${d.keyMessage||''}</div>
+          <div class="day-meta">${r.clinic} / ${r.job}</div>
+        </div>
+        <div class="status-tag ${tc}">${tt}</div>
+      </div>`;
+    }).join('');
+
+  const noData = staffRecords.length === 0
+    ? '<div class="loading">まだ提出がありません</div>' : '';
+
+  main.innerHTML = `
+    <div class="page-title">スタッフの提出状況</div>
+    <div class="page-sub">提出済みのDayを選んでフィードバックしてください</div>
+    ${alertHTML}
+    <div class="staff-tabs">${tabs}<button class="btn btn-outline" style="font-size:11px;padding:6px 12px;" onclick="loadAll()">↻ 更新</button></div>
+    <div class="day-list">${rows}${noData}</div>
+  `;
+}
+
+function renderDetail() {
+  const main = document.getElementById('mainArea');
+  const r = allData[currentKey];
+  if (!r) { currentView='list'; render(); return; }
+  const d = DAYS[r.day] || {};
+
+  const feedbackSection = r.status === 'done'
+    ? `<div class="done-box"><div class="done-label">✓ 送信済みのフィードバック</div><div class="done-text">${r.feedback}</div></div>`
+    : `<div style="background:var(--gold-light);border:1px solid #e8d5a0;border-radius:8px;padding:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">上長フィードバック</div>
+        <textarea class="feedback-input" id="feedbackInput" placeholder="${r.name}さんへのフィードバックを入力してください…"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-green" onclick="sendFeedback()">✓ GO — ${r.name}さんに送信</button>
+        </div>
+      </div>`;
+
+  main.innerHTML = `
+    <div class="back-btn" onclick="currentView='list';render();">← 一覧に戻る</div>
+    <div class="detail-card">
+      <div class="detail-header">
+        <div>
+          <div class="detail-day">Day ${String(r.day).padStart(2,'0')}</div>
+          <div class="detail-km">${d.keyMessage||''}</div>
+        </div>
+        <div style="text-align:right;font-size:11px;color:rgba(255,255,255,0.6);">${r.name}<br>${r.clinic} / ${r.job}</div>
+      </div>
+      <div class="detail-body">
+        <span class="field-label">感じたこと・考えたこと</span>
+        <div class="field-content">${r.thought||'（未記入）'}</div>
+        <span class="field-label">日報・気付き・改善提案</span>
+        <div class="field-content">${r.report||'（未記入）'}</div>
+        ${feedbackSection}
+      </div>
+    </div>
+  `;
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────
+function selectStaff(name) {
+  currentStaff = name;
+  currentView = 'list';
+  render();
+}
+
+function openDetail(key) {
+  currentKey = key;
+  currentView = 'detail';
+  render();
+}
+
+async function sendFeedback() {
+  const fb = document.getElementById('feedbackInput')?.value.trim();
+  if (!fb) { alert('フィードバックを入力してください。'); return; }
+  const r = allData[currentKey];
+  showToast('送信中…');
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'feedback',
+        clinic: r.clinic, name: r.name, day: r.day,
+        feedback: fb, aiDraft: '',
+        staffEmail: r.email || '',
+      }),
+    });
+    const json = await res.json();
+    if (json.ok) {
+      allData[currentKey].feedback = fb;
+      allData[currentKey].status = 'done';
+      showToast('✓ 送信しました');
+      render();
+    } else {
+      showToast('送信に失敗しました', true);
+    }
+  } catch(e) {
+    showToast('送信に失敗しました', true);
+  }
+}
+
+function showToast(msg, isError) {
+  const el = document.getElementById('saveToast');
+  el.textContent = msg;
+  el.style.background = isError ? '#c0392b' : 'var(--teal-deep)';
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 2500);
+}
+
+loadAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRAI MEDICAL GROUP｜研修日めくりノート 1on1 システム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#1a7a8a;--teal-deep:#0e5260;--teal-light:#e8f4f6;--teal-mid:#c2e0e6;--gold:#b8964a;--gold-light:#f5ecd6;--text:#1e2630;--text-soft:#4a5568;--bg:#f5f7f8;--white:#ffffff;--border:#d4e4e8;--green:#2d7d4e;--green-light:#e8f5ee;--amber:#c07a1a;--amber-light:#fef3e0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.8;min-height:100vh;}
+
+/* PROFILE SCREEN */
+.profile-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--teal-deep);padding:24px;}
+.profile-card{background:white;border-radius:16px;width:420px;max-width:100%;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.25);}
+.profile-card-header{background:var(--teal-deep);padding:28px 28px 20px;text-align:center;}
+.profile-logo{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;color:rgba(255,255,255,0.5);margin-bottom:6px;}
+.profile-title{font-family:'Noto Serif JP',serif;font-size:18px;font-weight:500;color:white;margin-bottom:4px;}
+.profile-sub{font-size:12px;color:rgba(255,255,255,0.55);}
+.profile-card-body{padding:24px 28px 28px;}
+.profile-field{margin-bottom:16px;}
+.profile-label{display:block;font-size:11px;font-weight:600;color:var(--teal-deep);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+.profile-label span{color:var(--teal);font-size:10px;font-weight:400;margin-left:4px;}
+.profile-select,.profile-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--text);background:white;outline:none;transition:border-color 0.2s;appearance:none;-webkit-appearance:none;}
+.profile-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5568' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+.profile-select:focus,.profile-input:focus{border-color:var(--teal);}
+.profile-select:disabled{background-color:#f0f4f5;color:var(--text-soft);}
+.profile-hint{font-size:11px;color:var(--text-soft);margin-top:4px;}
+.profile-submit{width:100%;padding:12px;background:var(--teal);color:white;border:none;border-radius:6px;font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-top:8px;transition:background 0.2s;}
+.profile-submit:hover{background:var(--teal-deep);}
+
+/* TOPBAR */
+.topbar{background:var(--teal-deep);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;position:sticky;top:0;z-index:100;}
+.topbar-left{display:flex;align-items:center;gap:10px;min-width:0;}
+.topbar-logo{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.06em;opacity:0.9;flex-shrink:0;}
+.topbar-sep{width:1px;height:18px;background:rgba(255,255,255,0.2);flex-shrink:0;}
+.staff-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.1);border-radius:20px;padding:4px 10px 4px 6px;min-width:0;}
+.staff-avatar{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;color:white;flex-shrink:0;}
+.staff-chip-name{font-size:11px;font-weight:500;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
+.staff-chip-meta{font-size:9px;color:rgba(255,255,255,0.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
+.chip-edit-btn{background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:11px;padding:0 0 0 4px;flex-shrink:0;transition:color 0.15s;}
+.chip-edit-btn:hover{color:white;}
+.mode-badge{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.1em;padding:3px 10px;border-radius:20px;text-transform:uppercase;}
+.mode-staff{background:rgba(255,255,255,0.15);color:white;}
+.mode-manager{background:var(--gold);color:white;}
+.mode-switcher{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border-radius:24px;padding:3px 4px;}
+.mode-btn{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;padding:4px 12px;border-radius:20px;border:none;cursor:pointer;transition:all 0.2s;color:rgba(255,255,255,0.6);background:transparent;letter-spacing:0.05em;}
+.mode-btn.active{background:white;color:var(--teal-deep);}
+
+/* LAYOUT */
+.app{display:flex;min-height:calc(100vh - 52px);}
+.sidebar{width:232px;background:white;border-right:1px solid var(--border);padding:16px 0;flex-shrink:0;overflow-y:auto;}
+.sidebar-section-label{font-size:9px;font-weight:700;letter-spacing:0.14em;color:var(--text-soft);padding:0 16px 6px;text-transform:uppercase;}
+.sidebar-item{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;transition:background 0.15s;border-left:3px solid transparent;}
+.sidebar-item:hover{background:var(--teal-light);}
+.sidebar-item.active{background:var(--teal-light);border-left-color:var(--teal);}
+.sidebar-day{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--teal-deep);min-width:26px;}
+.sidebar-info{flex:1;min-width:0;}
+.sidebar-key{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sidebar-status{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.status-none{background:#dce3e6;}.status-draft{background:var(--amber);}.status-pending{background:#3b82f6;}.status-done{background:var(--green);}
+.main{flex:1;padding:24px 28px;overflow-y:auto;max-width:780px;}
+
+/* DAY CARD */
+.day-card{background:white;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:20px;}
+.day-header{background:var(--teal-deep);padding:16px 22px;display:flex;align-items:flex-start;justify-content:space-between;}
+.day-num-block{display:flex;flex-direction:column;}
+.day-label{font-family:'Inter',sans-serif;font-size:9px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.15em;text-transform:uppercase;}
+.day-num{font-family:'Inter',sans-serif;font-size:34px;font-weight:300;color:white;line-height:1;margin-top:2px;}
+.chapter-badge{background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);font-size:10px;letter-spacing:0.1em;padding:4px 12px;border-radius:20px;font-family:'Inter',sans-serif;font-weight:500;}
+.key-message{background:var(--teal-deep);color:white;font-family:'Noto Serif JP',serif;font-size:14px;font-weight:500;padding:10px 22px 18px;line-height:1.6;}
+.day-body{padding:18px 22px;}
+.insight-block{margin-bottom:12px;}
+.insight-label{font-family:'Inter',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;margin-bottom:4px;}
+.insight-text{font-size:13px;color:var(--text-soft);line-height:1.8;}
+.enriched-block{background:var(--teal-light);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px;}
+.enriched-label{font-size:10px;font-weight:600;color:var(--teal-deep);letter-spacing:0.08em;margin-bottom:4px;}
+.enriched-text{font-size:12px;color:var(--text-soft);line-height:1.8;}
+.action-block{background:var(--gold-light);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:18px;}
+.action-label{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:0.08em;margin-bottom:4px;}
+.action-text{font-size:12px;color:var(--text-soft);line-height:1.8;}
+
+/* WRITE */
+.write-section{border-top:1px solid var(--border);padding-top:16px;}
+.write-block{margin-bottom:12px;}
+.write-label-bar{font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--teal-deep);background:var(--teal-light);padding:5px 10px;border-radius:4px;margin-bottom:6px;text-transform:uppercase;}
+textarea.write-input{width:100%;border:1px solid var(--border);border-radius:6px;padding:9px 11px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--text);resize:vertical;min-height:68px;background:#fafafa;transition:border-color 0.2s,background 0.2s;outline:none;}
+textarea.write-input:focus{border-color:var(--teal);background:white;}
+textarea.write-input:disabled{background:#f0f4f5;color:var(--text-soft);cursor:default;}
+textarea.feedback-input{width:100%;border:1px solid #e8d5a0;border-radius:6px;padding:9px 11px;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--text);resize:vertical;min-height:88px;background:white;outline:none;transition:border-color 0.2s;}
+textarea.feedback-input:focus{border-color:var(--gold);}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;}
+.btn:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-primary{background:var(--teal);color:white;}.btn-primary:hover:not(:disabled){background:var(--teal-deep);}
+.btn-green{background:var(--green);color:white;}.btn-green:hover:not(:disabled){background:#1e5c38;}
+.btn-outline{background:white;color:var(--text-soft);border:1px solid var(--border);}.btn-outline:hover:not(:disabled){border-color:var(--teal);color:var(--teal);}
+
+/* STATUS */
+.status-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:500;margin-bottom:14px;}
+.status-bar.none{background:#f0f4f5;color:var(--text-soft);}
+.status-bar.draft{background:var(--amber-light);color:var(--amber);border:1px solid #f0d080;}
+.status-bar.pending{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.status-bar.done{background:var(--green-light);color:var(--green);border:1px solid #a7d7bb;}
+.status-dot{width:8px;height:8px;border-radius:50%;}
+.status-bar.none .status-dot{background:#9ca3af;}
+.status-bar.draft .status-dot{background:var(--amber);}
+.status-bar.pending .status-dot{background:#3b82f6;}
+.status-bar.done .status-dot{background:var(--green);}
+
+/* AI */
+.ai-loading{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#f0f4ff;border:1px solid #c7d2fe;border-radius:8px;font-size:13px;color:#3730a3;margin-top:10px;}
+.spinner{width:16px;height:16px;border:2px solid #c7d2fe;border-top-color:#4f46e5;border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-draft-box{background:#f8f7ff;border:1px solid #c4b5fd;border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+.ai-draft-label{font-size:10px;font-weight:700;color:#7c3aed;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+
+/* STAFF INFO BANNER */
+.staff-info-banner{display:flex;align-items:center;gap:12px;background:white;border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:16px;}
+.staff-info-avatar{width:36px;height:36px;border-radius:50%;background:var(--teal-light);border:2px solid var(--teal-mid);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:var(--teal-deep);flex-shrink:0;}
+.staff-info-name{font-size:14px;font-weight:500;color:var(--text);}
+.staff-info-meta{font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap;}
+.staff-info-sep{color:var(--teal-mid);}
+
+/* MANAGER PANEL */
+.manager-panel{background:var(--gold-light);border:1px solid #e8d5a0;border-radius:8px;padding:14px;margin-top:16px;}
+.manager-panel-title{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;}
+
+/* DONE FEEDBACK */
+.done-feedback{background:var(--green-light);border:1px solid #a7d7bb;border-radius:8px;padding:12px 14px;}
+.done-label{font-size:10px;font-weight:700;color:var(--green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+.done-text{font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;}
+
+/* MANAGER LIST */
+.mgr-list{display:flex;flex-direction:column;gap:10px;}
+.mgr-list-item{background:white;border-radius:8px;border:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s;}
+.mgr-list-item:hover{border-color:var(--teal);box-shadow:0 2px 8px rgba(26,122,138,0.08);}
+.mgr-day-num{font-family:'Inter',sans-serif;font-size:22px;font-weight:300;color:var(--teal-deep);min-width:36px;}
+.mgr-item-info{flex:1;min-width:0;}
+.mgr-item-who{font-size:11px;color:var(--teal);font-weight:500;margin-bottom:2px;}
+.mgr-item-key{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mgr-status-tag{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:0.06em;white-space:nowrap;}
+.tag-pending{background:#eff6ff;color:#1d4ed8;}
+.tag-done{background:var(--green-light);color:var(--green);}
+.tag-none{background:#f0f4f5;color:#9ca3af;}
+
+/* EMAIL OVERLAY */
+.email-preview-overlay{display:none;position:fixed;inset:0;background:rgba(14,82,96,0.55);z-index:200;align-items:center;justify-content:center;}
+.email-preview-overlay.show{display:flex;}
+.email-card{background:white;border-radius:12px;width:540px;max-width:92vw;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.email-header{background:var(--teal-deep);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.email-header-title{font-size:13px;font-weight:500;}
+.email-close{background:rgba(255,255,255,0.15);border:none;color:white;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.email-close:hover{background:rgba(255,255,255,0.25);}
+.email-body{padding:18px 20px;}
+.email-field{margin-bottom:8px;font-size:12px;}
+.email-field-label{color:var(--text-soft);margin-right:6px;}
+.email-divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+.email-subject{font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px;}
+.email-content{font-size:13px;color:var(--text-soft);line-height:1.9;white-space:pre-wrap;}
+.email-footer-note{background:var(--green-light);border:1px solid #a7d7bb;border-radius:6px;padding:9px 14px;font-size:11px;color:var(--green);margin:12px 20px 18px;text-align:center;}
+
+/* ── SELF-INTRO SCREEN ── */
+.intro-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--teal-deep);
+  padding: 24px;
+}
+.intro-wrap {
+  width: 560px;
+  max-width: 100%;
+}
+.intro-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+.intro-progress-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  transition: background 0.3s;
+  cursor: pointer;
+}
+.intro-progress-dot.active { background: white; }
+.intro-progress-dot.done { background: rgba(255,255,255,0.6); }
+.intro-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+}
+.intro-card-header {
+  background: var(--teal-deep);
+  padding: 20px 28px 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.intro-step-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.intro-card-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: white;
+  line-height: 1.5;
+}
+.intro-step-num {
+  font-family: 'Inter', sans-serif;
+  font-size: 42px;
+  font-weight: 200;
+  color: rgba(255,255,255,0.2);
+  line-height: 1;
+  margin-top: -4px;
+}
+.intro-card-body {
+  padding: 20px 28px 24px;
+}
+.intro-section {
+  display: none;
+}
+.intro-section.active {
+  display: block;
+}
+.intro-lead {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-bottom: 16px;
+  line-height: 1.8;
+  background: var(--teal-light);
+  padding: 10px 14px;
+  border-radius: 6px;
+  border-left: 3px solid var(--teal);
+}
+.intro-field {
+  margin-bottom: 13px;
+}
+.intro-field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.intro-input, .intro-textarea {
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.intro-input:focus, .intro-textarea:focus {
+  border-color: var(--teal);
+  background: white;
+}
+.intro-textarea { resize: vertical; min-height: 60px; }
+.intro-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.intro-check-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fafafa;
+  transition: all 0.15s;
+  line-height: 1.5;
+}
+.intro-check-label:hover { border-color: var(--teal); background: var(--teal-light); }
+.intro-check-label input { margin-top: 2px; flex-shrink: 0; accent-color: var(--teal); }
+.intro-check-category {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--teal);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 10px 0 4px;
+}
+.intro-timeline-row {
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: start;
+}
+.intro-year-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--teal-deep);
+  padding-top: 9px;
+}
+.intro-nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+.intro-nav-skip {
+  font-size: 11px;
+  color: var(--text-soft);
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.15s;
+}
+.intro-nav-skip:hover { color: var(--teal); }
+.intro-nav-right { display: flex; gap: 8px; }
+.intro-btn-next {
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 22px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.intro-btn-next:hover { background: var(--teal-deep); }
+.intro-btn-back {
+  background: white;
+  color: var(--text-soft);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.intro-btn-back:hover { border-color: var(--teal); color: var(--teal); }
+
+/* 石工ストーリー */
+.stonemason-block {
+  background: var(--gold-light);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.stonemason-quote {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.9;
+  margin-bottom: 8px;
+}
+.stonemason-type {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+.stonemason-lesson {
+  font-size: 12px;
+  color: var(--text-soft);
+  line-height: 1.7;
+}
+.stonemason-divider {
+  border: none;
+  border-top: 1px dashed #e8d5a0;
+  margin: 10px 0;
+}
+
+
+/* ALERT BANNER */
+.alert-banner{border-radius:8px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.7;}
+.alert-banner.alert-warn{background:var(--amber-light);border:1px solid #f0d080;color:var(--amber);}
+.alert-banner.alert-danger{background:#fdecea;border:1px solid #f5c1bc;color:#b83228;}
+.alert-banner.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;}
+.alert-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.alert-title{font-weight:700;letter-spacing:0.04em;margin-bottom:2px;}
+.alert-body{color:inherit;opacity:0.85;}
+.alert-days{display:inline-block;background:rgba(0,0,0,0.08);border-radius:4px;padding:0px 6px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;margin-left:4px;vertical-align:middle;}
+/* Topbar alert dot */
+.topbar-alert-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;box-shadow:0 0 0 2px rgba(239,68,68,0.3);animation:pulse-dot 1.8s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 2px rgba(239,68,68,0.3);}50%{box-shadow:0 0 0 5px rgba(239,68,68,0.1);}}
+/* Summary alert strip in sidebar */
+.sidebar-alert-strip{background:#fdecea;border-top:1px solid #f5c1bc;padding:8px 14px;font-size:10px;color:#b83228;font-weight:600;display:flex;align-items:center;gap:5px;margin-top:4px;}
+
+
+/* ── MOBILE ── */
+.sidebar-toggle{display:none;background:var(--teal-deep);color:white;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+@media(max-width:640px){
+  .sidebar-toggle{display:inline-flex;align-items:center;gap:5px;}
+  .app{flex-direction:column;}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);padding:8px 0;display:none;max-height:220px;overflow-y:auto;}
+  .sidebar.open{display:block;}
+  .main{padding:14px 16px;}
+  .day-header{padding:12px 16px;}
+  .day-num{font-size:26px!important;}
+  .day-body{padding:14px 16px;}
+  .topbar{padding:0 12px;height:48px;}
+  .staff-chip-meta{display:none;}
+}
+
+</style>
+
+<!-- EMAIL OVERLAY -->
+<div class="email-preview-overlay" id="emailOverlay">
+  <div class="email-card">
+    <div class="email-header">
+      <div class="email-header-title">📧 送信されるメールのプレビュー</div>
+      <button class="email-close" onclick="closeEmail()">×</button>
+    </div>
+    <div class="email-body">
+      <div class="email-field"><span class="email-field-label">To:</span><span id="emailTo"></span></div>
+      <div class="email-field"><span class="email-field-label">From:</span>MMG 研修システム &lt;training@mmg.example&gt;</div>
+      <hr class="email-divider">
+      <div class="email-subject" id="emailSubject"></div>
+      <div class="email-content" id="emailContent"></div>
+    </div>
+    <div class="email-footer-note">✓ このプレビューの内容でメールが送信されます。送信後はスタッフの画面にフィードバックが反映されます。</div>
+  </div>
+</div>
+
+
+<!-- SELF-INTRO SCREEN -->
+<div id="introScreen" class="intro-screen" style="display:none;">
+  <div class="intro-wrap">
+    <div class="intro-progress" id="introProgress"></div>
+    <div class="intro-card">
+      <div class="intro-card-header">
+        <div>
+          <div class="intro-step-label" id="introStepLabel">Step 1 / 6</div>
+          <div class="intro-card-title" id="introCardTitle"></div>
+        </div>
+        <div class="intro-step-num" id="introStepNum">1</div>
+      </div>
+      <div class="intro-card-body">
+
+        <!-- Step 1: Basic info -->
+        <div class="intro-section active" id="intro-step-1">
+          <div class="intro-lead">まずはあなたのことを少し教えてください。カッコつけず、ありのままで。</div>
+          <div class="intro-field">
+            <label class="intro-field-label">名前の由来（知っていれば）</label>
+            <input class="intro-input" id="i_nameOrigin" placeholder="例：明るい未来を歩んでほしいという願いから">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="intro-field">
+              <label class="intro-field-label">生年月日</label>
+              <input class="intro-input" type="date" id="i_dob">
+            </div>
+            <div class="intro-field">
+              <label class="intro-field-label">現在の年齢</label>
+              <input class="intro-input" type="number" id="i_age" placeholder="歳" min="18" max="70">
+            </div>
+          </div>
+          <div class="intro-field">
+            <label class="intro-field-label">家族構成</label>
+            <input class="intro-input" id="i_family" placeholder="例：配偶者あり・子供1人・両親（父60歳・母58歳）">
+          </div>
+        </div>
+
+        <!-- Step 2: Happiness / needs -->
+        <div class="intro-section" id="intro-step-2">
+          <div class="intro-lead">あなたはどのような時に幸せを感じますか？周りは気にせず、本能のままでお答えください。（複数選択可）</div>
+          <div class="intro-checkbox-group">
+            <div class="intro-check-category">生存の欲求</div>
+            <label class="intro-check-label"><input type="checkbox" value="安心した環境で寝て、食べて、暮らせていると実感できたとき"> 安心した環境で寝て、食べて、暮らせていると実感できたとき</label>
+            <div class="intro-check-category">愛・所属の欲求</div>
+            <label class="intro-check-label"><input type="checkbox" value="家族・友人・恋人と一緒にいて大切にできているとき"> 家族・友人・恋人と一緒にいて大切にできているとき</label>
+            <label class="intro-check-label"><input type="checkbox" value="会社で仕事に熱中しているとき"> 会社で仕事に熱中しているとき</label>
+            <label class="intro-check-label"><input type="checkbox" value="患者様から感謝の声をいただいたとき"> 患者様から感謝の声をいただいたとき</label>
+            <label class="intro-check-label"><input type="checkbox" value="コミュニティに所属して活動しているとき"> サークル・コミュニティに所属して活動しているとき</label>
+            <div class="intro-check-category">力の欲求</div>
+            <label class="intro-check-label"><input type="checkbox" value="仕事で業績が認められたとき"> 仕事で業績が認められたとき</label>
+            <label class="intro-check-label"><input type="checkbox" value="勝負事に勝ったとき"> 試合・コンペなど勝負事に勝ったとき</label>
+            <div class="intro-check-category">自由の欲求</div>
+            <label class="intro-check-label"><input type="checkbox" value="束縛されず自由でいられると実感したとき"> 束縛されず自由でいられる、自由に選択できると実感したとき</label>
+            <div class="intro-check-category">楽しみの欲求</div>
+            <label class="intro-check-label"><input type="checkbox" value="人に笑顔や喜びを提供できたと感じたとき"> 人に笑顔や喜びを提供できたと感じたとき</label>
+            <label class="intro-check-label"><input type="checkbox" value="新しいことを学び、気づきがあったとき"> 知らなかったこと、新しいことを学び、気づきがあったとき</label>
+          </div>
+        </div>
+
+        <!-- Step 3: Future vision -->
+        <div class="intro-section" id="intro-step-3">
+          <div class="intro-lead">前のページで感じた「幸せ」に素直になって書いてみましょう。私はどんな人生を歩み、どんな未来を形成していたいか。具体的なイメージで。</div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">1年後</div>
+            <textarea class="intro-textarea" id="i_future1" placeholder="例：業務に慣れ、患者様に顔を覚えてもらえる存在になっている" style="min-height:44px;"></textarea>
+          </div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">3年後</div>
+            <textarea class="intro-textarea" id="i_future3" placeholder="例：後輩の指導を担い、チームの中核を担っている" style="min-height:44px;"></textarea>
+          </div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">5年後</div>
+            <textarea class="intro-textarea" id="i_future5" placeholder="例：リーダーとして院全体の運営にも関わっている" style="min-height:44px;"></textarea>
+          </div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">10年後</div>
+            <textarea class="intro-textarea" id="i_future10" placeholder="例：マネージャーとして複数院を見る立場になっている" style="min-height:44px;"></textarea>
+          </div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">人生の終末に</div>
+            <textarea class="intro-textarea" id="i_futureEnd" placeholder="例：子供や孫に囲まれ、地域医療に貢献できた人生だったと思えている" style="min-height:44px;"></textarea>
+          </div>
+        </div>
+
+        <!-- Step 4: Work purpose -->
+        <div class="intro-section" id="intro-step-4">
+          <div class="intro-lead">採用面接ではないので、ありのままに書いてください。答えは変わっていい。今のあなたの正直な気持ちを。</div>
+          <div class="intro-field">
+            <label class="intro-field-label">私は今、何のために働いているのか？</label>
+            <textarea class="intro-textarea" id="i_whyWork" placeholder="例：賃金獲得のため / 目指す看護実現のため / 子供のため"></textarea>
+          </div>
+          <div class="intro-field">
+            <label class="intro-field-label">私はなぜこの会社に入ったのか？</label>
+            <textarea class="intro-textarea" id="i_whyMMG" placeholder="例：自分の夢の実現ができそう / 地域医療に貢献したかった"></textarea>
+          </div>
+          <div class="intro-field">
+            <label class="intro-field-label">この会社でどのような動きをしたいか？</label>
+            <textarea class="intro-textarea" id="i_whatRole" placeholder="例：役職者になりリーダーシップを取れるようになりたい"></textarea>
+          </div>
+          <div class="intro-field">
+            <label class="intro-field-label">患者様にとってどのような担当者でありたいか？</label>
+            <textarea class="intro-textarea" id="i_forPatients" placeholder="例：名前を呼ばれると安心してもらえる存在でありたい"></textarea>
+          </div>
+        </div>
+
+        <!-- Step 5: Career goals -->
+        <div class="intro-section" id="intro-step-5">
+          <div class="intro-lead">この会社でどのような目標を設定し、どのような評価（職位）や対価を得ていたいか？職位の目安：リーダー → マネージャー → シニアマネージャー → GM → 執行役員</div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">1年後</div>
+            <textarea class="intro-textarea" id="i_career1" placeholder="例：リーダー候補として認められる" style="min-height:44px;"></textarea>
+          </div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">3年後</div>
+            <textarea class="intro-textarea" id="i_career3" placeholder="例：リーダーに昇格し、院内の業務改善を担う" style="min-height:44px;"></textarea>
+          </div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">5年後</div>
+            <textarea class="intro-textarea" id="i_career5" placeholder="例：マネージャーとして複数名を育成" style="min-height:44px;"></textarea>
+          </div>
+          <div class="intro-timeline-row">
+            <div class="intro-year-label">10年後</div>
+            <textarea class="intro-textarea" id="i_career10" placeholder="例：シニアマネージャー以上・グループ全体に貢献" style="min-height:44px;"></textarea>
+          </div>
+          <div class="intro-field" style="margin-top:8px;">
+            <label class="intro-field-label">これまで一番充実していた時期はいつ、どんなものでしたか？なぜ充実していたと思いますか？</label>
+            <textarea class="intro-textarea" id="i_bestTime" placeholder="例：学生時代の部活。仲間と共通の目標に向かっていた時が一番熱かった"></textarea>
+          </div>
+        </div>
+
+        <!-- Step 6: Stonemason story -->
+        <div class="intro-section" id="intro-step-6">
+          <div class="intro-lead">76日間の研修を始める前に、ピーター・ドラッカーの「石工の話」を読んでください。</div>
+          <div class="stonemason-block">
+            <div class="stonemason-quote">３人の石切職人が建設現場で働いていました。通りかかった旅人が、それぞれに同じ質問をします。<br><br>「あなたは何をしているのですか？」</div>
+          </div>
+          <div class="stonemason-block">
+            <div class="stonemason-type">一人目の石工</div>
+            <div class="stonemason-quote">つまらなそうな顔をして、「お金を稼ぐために石を切ってるんだ」と答えました。</div>
+            <hr class="stonemason-divider">
+            <div class="stonemason-lesson">仕事を単なる「お金を稼ぐための手段」と捉えている状態。やりがいや情熱が生まれにくいことがあります。</div>
+          </div>
+          <div class="stonemason-block">
+            <div class="stonemason-type">二人目の石工</div>
+            <div class="stonemason-quote">作業しながら「ここで一番の石切職人になる技術を身につけるんだ」と淡々と答えました。</div>
+            <hr class="stonemason-divider">
+            <div class="stonemason-lesson">専門性・技術の追求を目的とした状態。自己成長の追求は充実感をもたらします。</div>
+          </div>
+          <div class="stonemason-block">
+            <div class="stonemason-type">三人目の石工</div>
+            <div class="stonemason-quote">空を見上げ、目を輝かせながらこう答えました。<br>「教会を作っているんだ。私が作った教会で多くの人が集まり、安らぎの場となるんだ」</div>
+            <hr class="stonemason-divider">
+            <div class="stonemason-lesson">自分の作業が大きな目的・後世に続く価値あるものに繋がっていると捉えています。仕事の「全体像」と「目的」を理解することで、日々の作業がより尊く、やりがいのあるものになります。</div>
+          </div>
+          <div class="intro-field" style="margin-top:6px;">
+            <label class="intro-field-label">あなたはどの石工に近いですか？また、なぜそう思いますか？</label>
+            <textarea class="intro-textarea" id="i_stonemason" placeholder="例：今は一人目かもしれない。でも三人目を目指したい。なぜなら…"></textarea>
+          </div>
+        </div>
+
+        <div class="intro-nav">
+          <button class="intro-nav-skip" onclick="skipIntro()">あとで記入する</button>
+          <div class="intro-nav-right">
+            <button class="intro-btn-back" id="introBtnBack" onclick="introBack()" style="display:none;">← 戻る</button>
+            <button class="intro-btn-next" id="introBtnNext" onclick="introNext()">次へ →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div id="profileScreen" class="profile-screen">
+  <div class="profile-card">
+    <div class="profile-card-header">
+      <div class="profile-logo">MIRAI MEDICAL GROUP</div>
+      <div class="profile-title">研修日めくりノート</div>
+      <div class="profile-sub">はじめに、あなたの情報を登録してください</div>
+    </div>
+    <div class="profile-card-body">
+      <div class="profile-field">
+        <label class="profile-label" for="pClinic">クリニック名 <span>必須</span></label>
+        <select class="profile-select" id="pClinic" onchange="onClinicChange()">
+          <option value="">— 選択してください —</option>
+          <option>みらいメディカルクリニック茗荷谷</option>
+          <option>みらいメディカルクリニック西六郷</option>
+          <option>みらいメディカルクリニック銀座</option>
+          <option>みらいメディカルクリニック川口中央</option>
+          <option>みらいメディカルクリニック豊橋</option>
+          <option>みらいメディカルクリニック磐田</option>
+          <option>みらいメディカルクリニック王子</option>
+          <option>みらいメディカルクリニック鶴見</option>
+          <option>みらいメディカルクリニック府中</option>
+          <option>みらいメディカルクリニック虎ノ門</option>
+          <option>みらいメディカルクリニック赤羽</option>
+          <option>みらいメディカルクリニック浜松</option>
+          <option>みらいメディカルクリニック小田原</option>
+          <option>MMC本部</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label class="profile-label" for="pJob">職種 <span>必須</span></label>
+        <select class="profile-select" id="pJob" disabled>
+          <option value="">— クリニックを先に選択 —</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label class="profile-label" for="pName">氏名 <span>必須</span></label>
+        <input class="profile-input" type="text" id="pName" placeholder="例：山田 花子" maxlength="30">
+      </div>
+      <div class="profile-field">
+        <label class="profile-label" for="pEmail">メールアドレス <span>任意・通知先</span></label>
+        <input class="profile-input" type="email" id="pEmail" placeholder="例：hanako@mmg.example">
+        <div class="profile-hint">上長からのフィードバック通知が届きます</div>
+      </div>
+      <button class="profile-submit" onclick="saveProfile()">研修ノートをはじめる →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none;">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">MMG</div>
+      <div class="topbar-sep"></div>
+      <div class="staff-chip">
+        <div class="staff-avatar" id="staffAvatar"></div>
+        <div>
+          <div class="staff-chip-name" id="staffChipName"></div>
+          <div class="staff-chip-meta" id="staffChipMeta"></div>
+        </div>
+        <button class="chip-edit-btn" onclick="editProfile()" title="プロフィールを変更">✎</button>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+    </div>
+  </div>
+  <!-- 運用ガイドバナー -->
+  <div id="opNoticeBanner" style="background:linear-gradient(90deg,#0e5260,#1a7a8a);color:white;padding:8px 20px;font-size:11px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <span>📋 <strong>運用のヒント：</strong>スタッフはDayごとに記入・提出 → 上長がAIフィードバック草案を確認・編集してGO → スタッフにメールで返却。<a href="#" onclick="document.getElementById('opNoticeBanner').style.display='none';return false;" style="color:rgba(255,255,255,0.6);margin-left:8px;font-size:10px;">閉じる ×</a></span>
+  </div>
+  <div class="app">
+    <div style="display:none;padding:8px 16px;border-bottom:1px solid var(--border);background:white;" id="mobileMenuBar" class="mobile-menu-bar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">☰ 目次</button>
+    </div>
+    <div class="sidebar" id="sidebarEl">
+      <div class="sidebar-section-label">Chapter 1 — Basic Stance</div>
+      <div class="sidebar-item" onclick="selectDay(1)" id="sideDay1">
+        <div class="sidebar-day">01</div>
+        <div class="sidebar-info"><div class="sidebar-key">当社の理念「みらい永劫、持続可能…</div></div>
+        <div class="sidebar-status status-none" id="dot1"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(2)" id="sideDay2">
+        <div class="sidebar-day">02</div>
+        <div class="sidebar-info"><div class="sidebar-key">はじめの３ヶ月は死に物狂いで没頭…</div></div>
+        <div class="sidebar-status status-none" id="dot2"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(3)" id="sideDay3">
+        <div class="sidebar-day">03</div>
+        <div class="sidebar-info"><div class="sidebar-key">変化を恐れるな、成長なき企業は淘…</div></div>
+        <div class="sidebar-status status-none" id="dot3"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(4)" id="sideDay4">
+        <div class="sidebar-day">04</div>
+        <div class="sidebar-info"><div class="sidebar-key">主体性を持て。「誰かがやる」では…</div></div>
+        <div class="sidebar-status status-none" id="dot4"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(5)" id="sideDay5">
+        <div class="sidebar-day">05</div>
+        <div class="sidebar-info"><div class="sidebar-key">できない理由を探すな、できる方法…</div></div>
+        <div class="sidebar-status status-none" id="dot5"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(6)" id="sideDay6">
+        <div class="sidebar-day">06</div>
+        <div class="sidebar-info"><div class="sidebar-key">医療も経営だ。利益なくして理念な…</div></div>
+        <div class="sidebar-status status-none" id="dot6"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(7)" id="sideDay7">
+        <div class="sidebar-day">07</div>
+        <div class="sidebar-info"><div class="sidebar-key">約束・ルールを守る</div></div>
+        <div class="sidebar-status status-none" id="dot7"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(8)" id="sideDay8">
+        <div class="sidebar-day">08</div>
+        <div class="sidebar-info"><div class="sidebar-key">情けは味方、仇は敵なり。因果応報</div></div>
+        <div class="sidebar-status status-none" id="dot8"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(9)" id="sideDay9">
+        <div class="sidebar-day">09</div>
+        <div class="sidebar-info"><div class="sidebar-key">事業は人なり。職場は人を育てる場…</div></div>
+        <div class="sidebar-status status-none" id="dot9"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(10)" id="sideDay10">
+        <div class="sidebar-day">10</div>
+        <div class="sidebar-info"><div class="sidebar-key">職種・給与の理解</div></div>
+        <div class="sidebar-status status-none" id="dot10"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(11)" id="sideDay11">
+        <div class="sidebar-day">11</div>
+        <div class="sidebar-info"><div class="sidebar-key">誇り高き「町医者」であれ</div></div>
+        <div class="sidebar-status status-none" id="dot11"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(12)" id="sideDay12">
+        <div class="sidebar-day">12</div>
+        <div class="sidebar-info"><div class="sidebar-key">自分の家族を診るように——すべて…</div></div>
+        <div class="sidebar-status status-none" id="dot12"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(13)" id="sideDay13">
+        <div class="sidebar-day">13</div>
+        <div class="sidebar-info"><div class="sidebar-key">みらいの自分とこどもたちのために…</div></div>
+        <div class="sidebar-status status-none" id="dot13"></div>
+      </div>
+
+      <div class="sidebar-section-label">Chapter 2 — Team Building</div>
+      <div class="sidebar-item" onclick="selectDay(14)" id="sideDay14">
+        <div class="sidebar-day">14</div>
+        <div class="sidebar-info"><div class="sidebar-key">グループの強みと現在の課題</div></div>
+        <div class="sidebar-status status-none" id="dot14"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(15)" id="sideDay15">
+        <div class="sidebar-day">15</div>
+        <div class="sidebar-info"><div class="sidebar-key">全ては仕組み化（組織の自走）</div></div>
+        <div class="sidebar-status status-none" id="dot15"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(16)" id="sideDay16">
+        <div class="sidebar-day">16</div>
+        <div class="sidebar-info"><div class="sidebar-key">仕組み化の具体的な実践</div></div>
+        <div class="sidebar-status status-none" id="dot16"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(17)" id="sideDay17">
+        <div class="sidebar-day">17</div>
+        <div class="sidebar-info"><div class="sidebar-key">属人性を排除せよ。「あの人しか知…</div></div>
+        <div class="sidebar-status status-none" id="dot17"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(18)" id="sideDay18">
+        <div class="sidebar-day">18</div>
+        <div class="sidebar-info"><div class="sidebar-key">全ての患者様をファン化させる</div></div>
+        <div class="sidebar-status status-none" id="dot18"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(19)" id="sideDay19">
+        <div class="sidebar-day">19</div>
+        <div class="sidebar-info"><div class="sidebar-key">マニュアルを作る意義</div></div>
+        <div class="sidebar-status status-none" id="dot19"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(20)" id="sideDay20">
+        <div class="sidebar-day">20</div>
+        <div class="sidebar-info"><div class="sidebar-key">新人教育の仕組み（OJT・プリセ…</div></div>
+        <div class="sidebar-status status-none" id="dot20"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(21)" id="sideDay21">
+        <div class="sidebar-day">21</div>
+        <div class="sidebar-info"><div class="sidebar-key">早期離職のボトルネック解消</div></div>
+        <div class="sidebar-status status-none" id="dot21"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(22)" id="sideDay22">
+        <div class="sidebar-day">22</div>
+        <div class="sidebar-info"><div class="sidebar-key">「集合天才」をつくる</div></div>
+        <div class="sidebar-status status-none" id="dot22"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(23)" id="sideDay23">
+        <div class="sidebar-day">23</div>
+        <div class="sidebar-info"><div class="sidebar-key">サッカーチームのように役割を全う…</div></div>
+        <div class="sidebar-status status-none" id="dot23"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(24)" id="sideDay24">
+        <div class="sidebar-day">24</div>
+        <div class="sidebar-info"><div class="sidebar-key">2:6:2の法則を理解せよ</div></div>
+        <div class="sidebar-status status-none" id="dot24"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(25)" id="sideDay25">
+        <div class="sidebar-day">25</div>
+        <div class="sidebar-info"><div class="sidebar-key">リーダーは「労働組合長」になるな</div></div>
+        <div class="sidebar-status status-none" id="dot25"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(26)" id="sideDay26">
+        <div class="sidebar-day">26</div>
+        <div class="sidebar-info"><div class="sidebar-key">やってみせ、言って聞かせて、させ…</div></div>
+        <div class="sidebar-status status-none" id="dot26"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(27)" id="sideDay27">
+        <div class="sidebar-day">27</div>
+        <div class="sidebar-info"><div class="sidebar-key">船底に穴を開ける者を見逃すな</div></div>
+        <div class="sidebar-status status-none" id="dot27"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(28)" id="sideDay28">
+        <div class="sidebar-day">28</div>
+        <div class="sidebar-info"><div class="sidebar-key">環境整備の必要性</div></div>
+        <div class="sidebar-status status-none" id="dot28"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(29)" id="sideDay29">
+        <div class="sidebar-day">29</div>
+        <div class="sidebar-info"><div class="sidebar-key">環境整備の叩き台</div></div>
+        <div class="sidebar-status status-none" id="dot29"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(30)" id="sideDay30">
+        <div class="sidebar-day">30</div>
+        <div class="sidebar-info"><div class="sidebar-key">労働力の流動化で「暇」をなくす</div></div>
+        <div class="sidebar-status status-none" id="dot30"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(31)" id="sideDay31">
+        <div class="sidebar-day">31</div>
+        <div class="sidebar-info"><div class="sidebar-key">TTP：成功例を徹底的にパクれ</div></div>
+        <div class="sidebar-status status-none" id="dot31"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(32)" id="sideDay32">
+        <div class="sidebar-day">32</div>
+        <div class="sidebar-info"><div class="sidebar-key">アメーバ経営：小集団で採算をとる</div></div>
+        <div class="sidebar-status status-none" id="dot32"></div>
+      </div>
+
+      <div class="sidebar-section-label">Chapter 3 — Communication</div>
+      <div class="sidebar-item" onclick="selectDay(33)" id="sideDay33">
+        <div class="sidebar-day">33</div>
+        <div class="sidebar-info"><div class="sidebar-key">情報の共有・ホウレンソウ</div></div>
+        <div class="sidebar-status status-none" id="dot33"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(34)" id="sideDay34">
+        <div class="sidebar-day">34</div>
+        <div class="sidebar-info"><div class="sidebar-key">朝礼の目的</div></div>
+        <div class="sidebar-status status-none" id="dot34"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(35)" id="sideDay35">
+        <div class="sidebar-day">35</div>
+        <div class="sidebar-info"><div class="sidebar-key">口コミの逆を目指せ</div></div>
+        <div class="sidebar-status status-none" id="dot35"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(36)" id="sideDay36">
+        <div class="sidebar-day">36</div>
+        <div class="sidebar-info"><div class="sidebar-key">口コミは最良の目安箱</div></div>
+        <div class="sidebar-status status-none" id="dot36"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(37)" id="sideDay37">
+        <div class="sidebar-day">37</div>
+        <div class="sidebar-info"><div class="sidebar-key">期待との乖離がクレームを生む</div></div>
+        <div class="sidebar-status status-none" id="dot37"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(38)" id="sideDay38">
+        <div class="sidebar-day">38</div>
+        <div class="sidebar-info"><div class="sidebar-key">効率化で生まれた時間を、患者様へ</div></div>
+        <div class="sidebar-status status-none" id="dot38"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(39)" id="sideDay39">
+        <div class="sidebar-day">39</div>
+        <div class="sidebar-info"><div class="sidebar-key">「受付対応が最悪」と言わせない</div></div>
+        <div class="sidebar-status status-none" id="dot39"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(40)" id="sideDay40">
+        <div class="sidebar-day">40</div>
+        <div class="sidebar-info"><div class="sidebar-key">言いにくいことこそ、トーク技術（…</div></div>
+        <div class="sidebar-status status-none" id="dot40"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(41)" id="sideDay41">
+        <div class="sidebar-day">41</div>
+        <div class="sidebar-info"><div class="sidebar-key">医師の個体差と対応</div></div>
+        <div class="sidebar-status status-none" id="dot41"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(42)" id="sideDay42">
+        <div class="sidebar-day">42</div>
+        <div class="sidebar-info"><div class="sidebar-key">医師もチームの一員。医師の「いい…</div></div>
+        <div class="sidebar-status status-none" id="dot42"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(43)" id="sideDay43">
+        <div class="sidebar-day">43</div>
+        <div class="sidebar-info"><div class="sidebar-key">ルールで医師をコントロールせよ</div></div>
+        <div class="sidebar-status status-none" id="dot43"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(44)" id="sideDay44">
+        <div class="sidebar-day">44</div>
+        <div class="sidebar-info"><div class="sidebar-key">待ち時間は「謝罪」ではなく「気配…</div></div>
+        <div class="sidebar-status status-none" id="dot44"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(45)" id="sideDay45">
+        <div class="sidebar-day">45</div>
+        <div class="sidebar-info"><div class="sidebar-key">アンケートで「隠れた声」を拾う</div></div>
+        <div class="sidebar-status status-none" id="dot45"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(46)" id="sideDay46">
+        <div class="sidebar-day">46</div>
+        <div class="sidebar-info"><div class="sidebar-key">クレド（信条）を体現せよ</div></div>
+        <div class="sidebar-status status-none" id="dot46"></div>
+      </div>
+
+      <div class="sidebar-section-label">Chapter 4 — Strategy &amp; KPI</div>
+      <div class="sidebar-item" onclick="selectDay(47)" id="sideDay47">
+        <div class="sidebar-day">47</div>
+        <div class="sidebar-info"><div class="sidebar-key">2026年の課題は「収益の最大化…</div></div>
+        <div class="sidebar-status status-none" id="dot47"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(48)" id="sideDay48">
+        <div class="sidebar-day">48</div>
+        <div class="sidebar-info"><div class="sidebar-key">LTV（顧客生涯価値）を高めよ</div></div>
+        <div class="sidebar-status status-none" id="dot48"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(49)" id="sideDay49">
+        <div class="sidebar-day">49</div>
+        <div class="sidebar-info"><div class="sidebar-key">勝利の方程式：通院期間 × 診療…</div></div>
+        <div class="sidebar-status status-none" id="dot49"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(50)" id="sideDay50">
+        <div class="sidebar-day">50</div>
+        <div class="sidebar-info"><div class="sidebar-key">「3ヶ月処方」はLTVの損失であ…</div></div>
+        <div class="sidebar-status status-none" id="dot50"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(51)" id="sideDay51">
+        <div class="sidebar-day">51</div>
+        <div class="sidebar-info"><div class="sidebar-key">攻めの提案「1ヶ月後に確認させて…</div></div>
+        <div class="sidebar-status status-none" id="dot51"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(52)" id="sideDay52">
+        <div class="sidebar-day">52</div>
+        <div class="sidebar-info"><div class="sidebar-key">サブスクを強化せよ</div></div>
+        <div class="sidebar-status status-none" id="dot52"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(53)" id="sideDay53">
+        <div class="sidebar-day">53</div>
+        <div class="sidebar-info"><div class="sidebar-key">チャンスを逃すな、アップセルの提…</div></div>
+        <div class="sidebar-status status-none" id="dot53"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(54)" id="sideDay54">
+        <div class="sidebar-day">54</div>
+        <div class="sidebar-info"><div class="sidebar-key">減収は罪である</div></div>
+        <div class="sidebar-status status-none" id="dot54"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(55)" id="sideDay55">
+        <div class="sidebar-day">55</div>
+        <div class="sidebar-info"><div class="sidebar-key">増益の結果が、ボーナスと昇給の原…</div></div>
+        <div class="sidebar-status status-none" id="dot55"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(56)" id="sideDay56">
+        <div class="sidebar-day">56</div>
+        <div class="sidebar-info"><div class="sidebar-key">数字は絶対的なものさし</div></div>
+        <div class="sidebar-status status-none" id="dot56"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(57)" id="sideDay57">
+        <div class="sidebar-day">57</div>
+        <div class="sidebar-info"><div class="sidebar-key">原価を見直せ。コスト意識を持つ</div></div>
+        <div class="sidebar-status status-none" id="dot57"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(58)" id="sideDay58">
+        <div class="sidebar-day">58</div>
+        <div class="sidebar-info"><div class="sidebar-key">PDCAを回せ。日報はそのために…</div></div>
+        <div class="sidebar-status status-none" id="dot58"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(59)" id="sideDay59">
+        <div class="sidebar-day">59</div>
+        <div class="sidebar-info"><div class="sidebar-key">期限と約束を守る。それがプロの仕…</div></div>
+        <div class="sidebar-status status-none" id="dot59"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(60)" id="sideDay60">
+        <div class="sidebar-day">60</div>
+        <div class="sidebar-info"><div class="sidebar-key">現在の数値を即答できるか？</div></div>
+        <div class="sidebar-status status-none" id="dot60"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(61)" id="sideDay61">
+        <div class="sidebar-day">61</div>
+        <div class="sidebar-info"><div class="sidebar-key">時間帯予約のご案内、運用ルールを…</div></div>
+        <div class="sidebar-status status-none" id="dot61"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(62)" id="sideDay62">
+        <div class="sidebar-day">62</div>
+        <div class="sidebar-info"><div class="sidebar-key">目標未達なら、即座に対策を</div></div>
+        <div class="sidebar-status status-none" id="dot62"></div>
+      </div>
+
+      <div class="sidebar-section-label">Chapter 5 — Future &amp; Innovation</div>
+      <div class="sidebar-item" onclick="selectDay(63)" id="sideDay63">
+        <div class="sidebar-day">63</div>
+        <div class="sidebar-info"><div class="sidebar-key">ドミナント戦略：面で地域を制圧す…</div></div>
+        <div class="sidebar-status status-none" id="dot63"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(64)" id="sideDay64">
+        <div class="sidebar-day">64</div>
+        <div class="sidebar-info"><div class="sidebar-key">コアクリニック ＋ 在宅クリニッ…</div></div>
+        <div class="sidebar-status status-none" id="dot64"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(65)" id="sideDay65">
+        <div class="sidebar-day">65</div>
+        <div class="sidebar-info"><div class="sidebar-key">在宅診療のセントラル化</div></div>
+        <div class="sidebar-status status-none" id="dot65"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(66)" id="sideDay66">
+        <div class="sidebar-day">66</div>
+        <div class="sidebar-info"><div class="sidebar-key">ピンピンコロリを支えるテストステ…</div></div>
+        <div class="sidebar-status status-none" id="dot66"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(67)" id="sideDay67">
+        <div class="sidebar-day">67</div>
+        <div class="sidebar-info"><div class="sidebar-key">テストステロン療法について</div></div>
+        <div class="sidebar-status status-none" id="dot67"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(68)" id="sideDay68">
+        <div class="sidebar-day">68</div>
+        <div class="sidebar-info"><div class="sidebar-key">SAS（睡眠時無呼吸症候群）の取…</div></div>
+        <div class="sidebar-status status-none" id="dot68"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(69)" id="sideDay69">
+        <div class="sidebar-day">69</div>
+        <div class="sidebar-info"><div class="sidebar-key">メンズヘルス・フェムテックへの挑…</div></div>
+        <div class="sidebar-status status-none" id="dot69"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(70)" id="sideDay70">
+        <div class="sidebar-day">70</div>
+        <div class="sidebar-info"><div class="sidebar-key">町医者を守るM&A戦略</div></div>
+        <div class="sidebar-status status-none" id="dot70"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(71)" id="sideDay71">
+        <div class="sidebar-day">71</div>
+        <div class="sidebar-info"><div class="sidebar-key">医療・介護・保育の課題を解決する</div></div>
+        <div class="sidebar-status status-none" id="dot71"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(72)" id="sideDay72">
+        <div class="sidebar-day">72</div>
+        <div class="sidebar-info"><div class="sidebar-key">100院、そして1000院へ</div></div>
+        <div class="sidebar-status status-none" id="dot72"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(73)" id="sideDay73">
+        <div class="sidebar-day">73</div>
+        <div class="sidebar-info"><div class="sidebar-key">AIとのつきあいかた</div></div>
+        <div class="sidebar-status status-none" id="dot73"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(74)" id="sideDay74">
+        <div class="sidebar-day">74</div>
+        <div class="sidebar-info"><div class="sidebar-key">人材採用：育つ土壌と水質管理</div></div>
+        <div class="sidebar-status status-none" id="dot74"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(75)" id="sideDay75">
+        <div class="sidebar-day">75</div>
+        <div class="sidebar-info"><div class="sidebar-key">DX化で業務をスリムに</div></div>
+        <div class="sidebar-status status-none" id="dot75"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(76)" id="sideDay76">
+        <div class="sidebar-day">76</div>
+        <div class="sidebar-info"><div class="sidebar-key">３人の石工——あなたはどの石工で…</div></div>
+        <div class="sidebar-status status-none" id="dot76"></div>
+      </div>
+      <div class="sidebar-item" onclick="selectDay(77)" id="sideDay77">
+        <div class="sidebar-day">77</div>
+        <div class="sidebar-info"><div class="sidebar-key">未来は自分たちの手で創る</div></div>
+        <div class="sidebar-status status-none" id="dot77"></div>
+      </div>
+    </div>
+    <div class="main" id="mainArea"></div>
+  </div>
+</div>
+
+<script>
+const CLINICS={
+  'みらいメディカルクリニック茗荷谷':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック西六郷':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック銀座':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック川口中央':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック豊橋':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック磐田':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック王子':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック鶴見':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック府中':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック虎ノ門':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック赤羽':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック浜松':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'みらいメディカルクリニック小田原':['医師','看護師','医療事務','受付','リハビリ','技師','ドライバー','人事部','営業部','自費・オンライン事業部'],
+  'MMC本部':['人事部','営業部','自費・オンライン事業部','経営企画','広報','システム','総務'],
+};
+const DAYS={
+  1:{chapter:'Basic Stance',keyMessage:'当社の理念「みらい永劫、持続可能な医療の実践」を常に心に刻む',insight:'少子高齢化や財源不足により、日本の医療環境・保険医療制度は厳しさを増しています。私たちは民間レベルから解決策を創出し、地域医療という「灯」を絶やさず、次の世代へ繋ぐ使命があります。',enriched:'2025年時点で、日本の65歳以上人口は全体の30%近くに達しています。一方、国民医療費は毎年増加し続け、財源の持続性が社会課題となっています。「みらい永劫」という理念は、単なるスローガンではなく、こうした厳しい現実を直視した上での決意表明です。クリニックひとつひとつが地域の「砦」であるという誇りを、日々の業務の中で忘れないようにしましょう。',action:'今日のあなたの思考や行動は、10年後の地域医療や子供たちの未来に貢献できていますか？明日もMMCの仲間として、誇りを持って日々の業務にあたりましょう。' },
+  2:{chapter:'Basic Stance',keyMessage:'はじめの３ヶ月は死に物狂いで没頭せよ、そして少なくとも５年は続けよ',insight:'入職おめでとうの言葉と共に、あえてこのメッセージを贈ります。はじめにどれだけ頑張れるかが肝心。上長も、あえて負荷をかけて試します。３ヶ月で中の人、５年あれば揺るぎないベテランに。',enriched:'心理学では「コンピテンス」（有能感）が高まるまでに、新しいスキルを習得するには約10,000時間が必要とも言われます。しかし医療現場では、最初の3ヶ月で「場の空気」「患者様の顔ぶれ」「チームの文化」を素早く掴むことが特に重要です。泣くほど悔しいと感じる夜は、あなたが本気で向き合っている証拠。その感情を大切にしてください。',action:'今日悔しくて涙を流したとしても、それは成長の糧。そこで諦めたり落ち込む必要はありません。上長も昔は泣き虫で弱々でした。何くそとしがみついて。' },
+  3:{chapter:'Basic Stance',keyMessage:'変化を恐れるな、成長なき企業は淘汰される',insight:'クリニックも一つの企業・運営体。社会の変化に対応し、増収増益という「成長」を続けてこそ、存続が可能になります。AI・DXの進化は日進月歩。「今まで通り」のやり方が通用しない時代がきます。',enriched:'かつてフィルムカメラの巨人コダックは、デジタル技術の波に乗り遅れて経営破綻しました。医療業界もAI診断支援、オンライン診療、電子処方箋と急速に変化しています。変化への抵抗は「今が安全」という錯覚から生まれます。変化を「脅威」ではなく「チャンス」と捉え直す思考習慣を意識的に身につけていきましょう。',action:'あなたは「今のままでいいや」と思考停止していませんか？今日一つ、昨日より良くするための新しい工夫を想像・創造し、現場で試みてみましょう。' },
+  4:{chapter:'Basic Stance',keyMessage:'主体性を持て。「誰かがやる」ではなく「私がやる」',insight:'全職種と積極的な議論を行い、あらゆる仕事の効率化を意識しましょう。職域を越えて働く見本になることがリーダーの役割です。',enriched:'「傍観者効果」という心理現象をご存知ですか？周囲に人が多ければ多いほど、「誰かがやるだろう」と責任が分散し、誰も行動しなくなる現象です。職場でも同様です。「自分が動く」という主体性の一歩が、チーム全体の空気を変えます。職域の境界線を越えて手を差し伸べる姿勢こそ、真のプロフェッショナリズムです。',action:'今日、あなたが「職域を越えて」取り組めることは何ですか？「それは私の仕事ではありません」ではなく、「何か私にできることはある？」と聞いてみよう。' },
+  5:{chapter:'Basic Stance',keyMessage:'できない理由を探すな、できる方法を考えろ',insight:'「時間がない・忙しい」「人員がいない」と言い訳をするのは簡単です。「今がベストなんだ」と思考を停止したり、「限界」を自分で設定しないでください。制約がある、苦しい条件下でも、どう目的を達成するか知恵を絞りましょう。',enriched:'制約は創造性の母と言われます。予算も人手も時間も限られた中で生まれた工夫こそ、最もシンプルで強力なソリューションになることがあります。「できない理由10個」を考える時間があれば、「できる方法1つ」を探す時間に使いましょう。問題をチャンスと捉え、「もしも制約がなければ」ではなく、「この制約の中で最善は何か」を問い続けることが成長への道です。',action:'「それは無理だ」と諦めていることはありませんか？視点を変えて、「どうすれば実現できるか」をチームで話し合ってみましょう。' },
+  6:{chapter:'Basic Stance',keyMessage:'医療も経営だ。利益なくして理念なし',insight:'私たちはボランティアではありません。健全な収益があってこそ、質の高い医療を持続的に提供し、崇高な理念を体現することができます。利益への意識はプロの義務です。',enriched:'「医療はお金じゃない」という声を聞くことがあります。しかし現実として、スタッフへの適正な給与、最新医療機器の導入、安心・安全な診療環境の維持には、すべて収益が必要です。利益を追求することは、より多くの患者様を救う力を得ることでもあります。コスト意識と患者思いは矛盾しません。むしろ両立させることが、本当のプロフェッショナルの姿です。',action:'あなたの今日の業務は、クリニックの利益にどう貢献していますか？コスト意識と売上意識の両方を持ちましょう。' },
+  7:{chapter:'Basic Stance',keyMessage:'約束・ルールを守る',insight:'規律・規範（就業規則）はもちろん、期日・約束（書類・目標・ミーティング時間）を守ることは、組織の信頼を築く上で不可欠です。目標を立て、その達成を客観的に評価する姿勢が求められます。',enriched:'「信頼」は長い時間をかけて積み上げ、一瞬で崩れるものです。5分の遅刻、少しの手抜き、小さな嘘——これらを「たいしたことない」と積み重ねると、周囲からの信用を静かに失っていきます。逆に、小さな約束を確実に守り続ける人は、やがて「この人なら任せられる」という大きな信頼を勝ち取ります。ルールを守ることは、自分自身の価値を高める行為です。',action:'あなたが今週中に守るべき「約束」や「期日」を再確認し、達成のための具体的な計画（いつまでに何を成し遂げるのか）を3つ立ててみましょう。' },
+  8:{chapter:'Basic Stance',keyMessage:'情けは味方、仇は敵なり。因果応報',insight:'スタッフ同士の、また患者様との関わり方は、巡り巡って自分や組織に返ってきます。誠実な対応は味方を作り、不誠実な対応は将来の敵を作ります。退職時のマナーも同様に、後を濁してやめていく人、喧嘩口調でやめていく人、採用面接で前職の悪口を言う人を見たことはありませんか？',enriched:'医療業界は狭い世界です。今日丁寧に接した患者様が、別のクリニックのスタッフのご家族だったり、地域の口コミキーパーソンだったりすることもあります。人と人の縁はどこでどう繋がるかわかりません。「この人の前でも恥ずかしくない行動をしているか」と常に自問する習慣が、長期的な信頼と評判を築きます。',action:'日々のコミュニケーションにおいて、感謝とリスペクトを忘れていませんか？相手の立場に立った言動を心がけましょう。' },
+  9:{chapter:'Basic Stance',keyMessage:'事業は人なり。職場は人を育てる場である',insight:'企業は社会の公器であり、人を育てる場である、とは偉大なる先人の言。良い仕事環境と学びの機会を通じて、スタッフ一人ひとりが成長し、長く貢献できる人材になることを目指します。',enriched:'松下幸之助は「人を育てることが、最も大切な仕事である」と語りました。どれほど優れたシステムや設備があっても、それを動かす人間の力が組織の真の価値を決めます。教わる立場であれば積極的に吸収し、教える立場になったときは惜しみなく伝えること。この「循環」こそが、組織を強くし続ける原動力です。',action:'あなたは今日、どんな仲間に助けられ、どんな新しいことを学びましたか？自身の成長がクリニックの成長につながることを意識しましょう。' },
+  10:{chapter:'Basic Stance',keyMessage:'職種・給与の理解',insight:'医師、看護師、事務員、ドライバー、誰が偉いということはありません。ただし、与えられた役割、それにより取る責任の重さ、代替性、貢献度などから、給与とボーナスが決まります。義務を果たさず権利だけ主張することは悪です。',enriched:'報酬は「責任・専門性・代替困難性・貢献度」の掛け合わせで決まります。単純に職種の上下ではなく、どれだけ組織に不可欠な存在になれるか、どれだけ責任を引き受けられるかが評価の本質です。「なぜ自分の給与はこうなのか」を正しく理解し、次のステップへの向上心に変えましょう。文句ではなく、行動で証明する姿勢が求められます。',action:'あなたの職種の「責任の重さ」と「代替性」を客観的に評価してみましょう。' },
+  11:{chapter:'Basic Stance',keyMessage:'誇り高き「町医者」であれ',insight:'高度医療を担う大病院とは違い、私たちは地域住民の生活に一番近い場所で、日々の健康を守る「門番」です。何でも相談できる、頼れる町医者としての誇りを持ちましょう。',enriched:'大病院では診察時間3分と言われることもある中、私たちのクリニックは患者様の「困りごと」「生活背景」「不安」を丁寧に聞ける場です。「先生、実は…」と打ち明けてもらえる関係性こそ、最大の差別化です。地域の方にとって「あそこに行けば大丈夫」と思ってもらえること——それが町医者の本当の価値であり、誇りです。',action:'地域の方々から「何かあったらあそこに行けば安心」と思われていますか？信頼を積み重ねましょう。' },
+  12:{chapter:'Basic Stance',keyMessage:'自分の家族を診るように——すべての思考と行動の根源はこの5文字「じぶんごと」',insight:'判断に迷った時、立ち返るべき原点はここです。「もし目の前の患者様が、自分の親や子供だったらどうするか？」その判断こそが、私たちが提供すべき医療の正解です。',enriched:'「じぶんごと」——この5文字は、すべての業務判断の試金石です。書類を丁寧に作成するとき、患者様への説明を工夫するとき、苦情対応に向き合うとき。「自分の大切な家族が相手なら?」という問いを持つだけで、行動の質が変わります。これはルールではなく、MMCスタッフとしての「心の姿勢」です。',action:'今日のあなたの患者様対応、大切な家族が受けても満足のゆくものでしたか？「じぶんごと」でできたか点数をつけると何点でしょうか？愛情と誠実さを持って患者様と向き合いましょう。' },
+  13:{chapter:'Basic Stance',keyMessage:'みらいの自分とこどもたちのために今できること',insight:'グループ名の由来であり、私たちのスローガンです。今私たちが頑張ることは、将来の自分たち、そして次の世代が安心して暮らせる社会を作ることに、つながっています。',enriched:'「MIRAI」という名には、単なる未来への希望以上の意味が込められています。少子化・高齢化・医療財源の枯渇という現実に対して、「民間から解決策を生む」という強い意志の宣言です。今日あなたが手を抜かずに仕事したこと、患者様に真剣に向き合ったこと——その一つひとつが、10年後・20年後の地域医療の礎になります。',action:'いま、あなたができることは何ですか？持ち越していたりやり残しているタスクはありませんか？小さな一歩の踏み出し、小さな努力の積み重ねが、未来を変える力になります。' },
+  14:{chapter:'Team Building',keyMessage:'グループの強みと現在の課題',insight:'成長のキーワードは、①業務最大効率化、②そのための仕組み化、③属人性の排除・再現性・情報共有、④人材活用（組織内の流動性）、⑤サービスのプロとしての個の意識、です。特に「仕組み化」は、個に頼らず再現性を保ち自走できる組織の土台として最重要課題です。',enriched:'強いチームの共通点は「誰が来ても同じクオリティが出せる」ことです。スーパースター一人に依存する組織は、その人が欠けた途端に機能不全に陥ります。仕組み化・マニュアル化は「手抜き」ではなく、「安定した質を全員で維持する」ための高度な取り組みです。これら5つのキーワードを常に意識して業務に臨みましょう。',action:'あなたの今日の業務の中で、「個に依存している業務（この人しか知らない・できない業務）」はありませんか？また、「仕組み化」できる非効率な作業はありませんか？' },
+  15:{chapter:'Team Building',keyMessage:'全ては仕組み化（組織の自走）',insight:'医師・トップ誘導のカリスマ経営や恐怖支配には限界があります。トップダウンは命令待ち人間を量産します。目指すのは、恐怖や感情で左右される不安定な組織でなく、仕組みで回る永久機関です。その潤滑油は「理念」です。',enriched:'「カリスマが去った後に残るのは空白だけ」——優秀なリーダーが一人いれば組織は動きますが、そのリーダーが不在になった途端に混乱します。理念を共有し、仕組みで動く組織は、誰が担当者でも安定したサービスを届けられます。飲食チェーンやコンビニが「誰でも同じ品質」を実現できるのも、徹底した仕組み化のおかげです。医療現場にも、この考え方を取り入れましょう。',action:'あなたの部署は「命令待ち」になっていませんか？「自走」するために必要な仕組みを提案できていますか？' },
+  16:{chapter:'Team Building',keyMessage:'仕組み化の具体的な実践',insight:'就業規則と同様に、当グループの「定期運行のための」仕組みを策定しましょう。朝礼、受付、環境整備など、すべてを仕組みで回します。作った仕組みは共有、常に提案→承認→更新を繰り返してより良いものにしていきます。',enriched:'仕組みは一度作ったら終わりではありません。現場からのフィードバックをもとに「提案→承認→更新」のサイクルを回し続けることで、実情に即した生きたマニュアルになります。形骸化したルールは誰も守りません。使われる仕組みを作ることが大切です。',action:'あなたの部署の「仕組み」は、最後にいつ「提案→承認→更新」されましたか？' },
+  17:{chapter:'Team Building',keyMessage:'属人性を排除せよ。「あの人しか知らない、できない」をなくす',insight:'医師・運営本部依存、マネージャー（責任者）依存の運営は禁止です。仕事や問題を抱え込まず、分散・共有できる組織を目指します。そのためには、徹底的なマニュアル化・仕組み化が必要です。',enriched:'「自分しかできない」という状況に安心感や優位性を感じる人もいますが、それは組織にとってもリスクであり、本人にとっても「休めない・辞められない」拘束になります。ナレッジを共有することで、あなた自身はより高度な仕事にシフトできます。知識を囲い込むのではなく、開放することが本当の強さです。',action:'あなたが「自分しかできない」と思っている業務を棚卸しし、それを誰もができるようにするためのマニュアルを作成してみてください。' },
+  18:{chapter:'Team Building',keyMessage:'全ての患者様をファン化させる',insight:'クレームの多い患者様、待てない患者様、口数の少ない患者様。一筋縄では行かないのが接客業ですが、そんな人たちをもファン化させるのがサービスのプロです。主役は医師ではありません。各職種、皆さんひとりひとりの「推し」となっていただき、クリニック全体のファンとなっていただけるよう、しっかり向き合っていきましょう。',enriched:'「ファン」を持つクリニックは強いです。ファンになった患者様は自ら口コミを広げ、多少不便でも通い続け、他のスタッフに感謝を伝えてくれます。それは特別なスキルではなく、「この人がいるから安心」「この受付の人が好き」という小さな信頼の積み重ねから生まれます。あなた自身が誰かの「推しスタッフ」になることを目指しましょう。',action:'患者様に怒られたこと、褒められたことを思い出し、記載しましょう。こうすればよかったなどの改善案も含め共有してください。' },
+  19:{chapter:'Team Building',keyMessage:'マニュアルを作る意義',insight:'スタッフが育たない、ミスが続く原因は、教育の仕組みがないことにあります。マニュアルは、入職者が最短時間でひとり立ちし、理解度やスキルを客観的に評価するための土台です。',enriched:'「見て覚えろ」式の教育は、教わる側の優秀さに依存する非効率なシステムです。マニュアルがあれば、誰が教えても一定水準の教育ができ、教える側の負担も減ります。良いマニュアルは「新人が一人で読んで実践できるレベル」が目標。現場のリアルな声を盛り込んだ生きたドキュメントを目指しましょう。',action:'あなたの部署のマニュアルは、新入職者や未経験者が読んでもすぐに業務を開始できるレベルに設定されていますか？' },
+  20:{chapter:'Team Building',keyMessage:'新人教育の仕組み（OJT・プリセプターは大切）',insight:'採用コストを考えると、採用したスタッフを計画的に育成することが重要です。入職時のガイダンス、メンターの任命、そしてOJTリストを作り都度評価を行うことで、スタッフの成長を実感させ、定着率を高めます。',enriched:'採用コストは職種によりますが、一人採用するのに数十万円かかることも珍しくありません。早期離職はその投資を無駄にするだけでなく、残るスタッフへの負担増にもつながります。「育てる仕組み」への投資は、採用コスト削減と組織力強化の両方に繋がる最も賢い経営判断のひとつです。',action:'あなたの部署の新人教育の仕組みに、「成長を実感させる」ための要素は含まれていますか？OJTリストに沿って教育、評価されていますか？' },
+  21:{chapter:'Team Building',keyMessage:'早期離職のボトルネック解消',insight:'早期離職は、新入職者がマニュアルやリストに沿わない場当たり的な教育のなか、非効率な業務が押し付けられることによっておきます。ボトルネック業務を特定し、効率化することがリーダーの責務です。スタッフ全員が「ここで頑張ろう」と思える作業・教育環境を整えましょう。',enriched:'「ボトルネック」とは、工場の瓶（ボトル）の首のように、そこが詰まると全体の流れが止まる箇所のことです。例えば健診結果の作成・郵送業務が一人に集中していると、その人が休んだだけで全体が止まります。ボトルネックを特定し、分散・効率化することがリーダーの最重要ミッションです。',action:'あなたの部署の「ボトルネック」となっている業務は何ですか？その改善提案を具体的にまとめてみましょう。' },
+  22:{chapter:'Team Building',keyMessage:'「集合天才」をつくる',insight:'一人のスーパースターに頼るのではなく、全員の知恵と経験を集めて最強のチームを作る、それが「集合天才」の考え方です。ミスや失敗の共有も、組織全体の大切な知恵となります。',enriched:'絵本「スイミー」では、小さな魚たちが力を合わせて大きな魚の形を作り、天敵を追い払います。これが「集合天才」の原点です。一匹一匹は弱くても、知恵を合わせれば最強になれる。失敗を隠すのではなく共有することで、組織全体のリスクが下がり、新しいナレッジが生まれます。',action:'自分だけの知識に留めていることはありませんか？良い気づきも失敗も、チーム全体で共有して資産に変えましょう。絵本「スイミー」を知っていますか？' },
+  23:{chapter:'Team Building',keyMessage:'サッカーチームのように役割を全うせよ',insight:'組織はサッカーチームと同じです。FW（攻め：営業・集客／医療サービス提供）、DF（守り：採用人事・労務／顧客・従業員満足）、GK（財務）など、各自が自分のポジションの役割を理解し、全うすることで勝利できます。',enriched:'優れたチームは「全員が同じことをする」のではなく、「各々がポジションの役割を完璧に果たす」ことで勝ちます。守備ばかりの選手でも、攻撃陣をフリーにする働きで試合を決めることがあります。あなたの「ポジション」は何か、そこで最大限に貢献できているかを常に確認しましょう。',action:'今のあなたのポジションはどこですか？チームの勝利（目標達成）のために、その役割を最大限発揮できていますか？' },
+  24:{chapter:'Team Building',keyMessage:'2:6:2の法則を理解せよ',insight:'組織には意欲的な2割、普通の6割、貢献度の低い2割が存在すると言われます。下位2割に引きずられるのではなく、上位・中間層が主体的に動き、組織全体の底上げを図りましょう。',enriched:'2:6:2の法則はアリのコロニー研究からも示されています。どんな組織でもこの比率は変わらないとも言われますが、重要なのは「上位2割と中間6割が下位2割を底上げする」ことです。下位の存在を嘆くのではなく、どうすれば中間層が力を発揮し、全体水準が上がるかを考えることがリーダーの役割です。',action:'あなたはどの層にいたいですか？周囲に良い影響を与える存在になれるよう、日々の行動を見直してみましょう。' },
+  25:{chapter:'Team Building',keyMessage:'リーダーは「労働組合長」になるな',insight:'リーダーの役割は、スタッフの不満や患者様トラブルをただ上に伝えることではありません。会社の方針を理解し、部下・患者様に伝え、現場の問題を解決に導くことです。安易な御用聞き・伝聞係にならないでください。',enriched:'「リーダー」と「代弁者」は違います。本当のリーダーは組織のビジョンと現場の実情をつなぐ「翻訳者」です。不満を持ち上げるだけでなく、「なぜそのルールがあるか」を伝え、「どうすれば解決できるか」を一緒に考える姿勢こそがリーダーシップの本質です。',action:'会社の不平不満大会のリーダーになって終わっていませんか？「では、どうすれば解決できるか」と、解決のための建設的な議論へ導き、行動を起こしましょう。' },
+  26:{chapter:'Team Building',keyMessage:'やってみせ、言って聞かせて、させてみせ',insight:'山本五十六の言葉にあるように、人はただ命じるだけでは動きません。手本を示し、説明し、実際にやらせてみて、承認することで初めて育ちます。忍耐強い関わりが必要です。',enriched:'山本五十六の名言の続きは「やってみせ、言って聞かせて、させてみせ、ほめてやらねば人は動かじ」です。最後の「ほめてやらねば」も重要。人は認められることで自信を持ち、自発的に動くようになります。承認・フィードバックの習慣を職場文化として根付かせましょう。',action:'「背中を見て覚えろ」や「丸投げ」になっていませんか？相手が理解し、自信を持って動けるまで、丁寧にプロセスを踏んでいますか？' },
+  27:{chapter:'Team Building',keyMessage:'船底に穴を開ける者を見逃すな',insight:'同じ船に乗っている仲間であれば、共に漕ぐべきです。組織の悪口を言ったり、ルールを破ったりして船底に穴を開けるような行為は、全員を危険に晒します。毅然とした対処が必要です。',enriched:'組織の悪口・陰口・ルール無視は、見えないところで確実にチームの士気と信頼を蝕んでいきます。「あの人がやっているから」という連鎖が始まると、組織文化は急速に劣化します。問題行動を見て見ぬふりをすることも、同罪です。健全な職場環境を守ることはチーム全員の責任です。',action:'組織の士気を下げる言動をしている人はいませんか？見て見ぬふりをせず、チーム全体で健全な環境を守りましょう。' },
+  28:{chapter:'Team Building',keyMessage:'環境整備の必要性',insight:'環境整備はハード（院内）とソフト（データ）の両面で必要です。毎日の清掃はもちろん、PC内のデータ整理やクラウドバックアップを徹底し、ローカル保存によるデータ消失リスクを防ぎましょう。',enriched:'「整理・整頓・清潔・清掃・躾」——5Sは製造業から医療まで、世界中のプロフェッショナルが実践する環境管理の基本です。院内が清潔で整理されていると、患者様の安心感につながり、スタッフのミスも減ります。物理的な環境だけでなく、データ環境の整理も現代では欠かせません。',action:'クリニック共用のPCは、デスクトップや「お気に入り」が誰が見てもわかるように整理されていますか？統一ルールを作りましょう。' },
+  29:{chapter:'Team Building',keyMessage:'環境整備の叩き台',insight:'ハード面では清掃のタイムスケジュールとチェックリストを、ソフト面ではPC整理とバックアップのルールを策定します。これらは業務効率化と属人性排除の第一歩です。',enriched:'チェックリストは「プロの道具」です。航空パイロットは何千時間のフライト経験があっても、必ずチェックリストを使います。医療現場でも、チェックリストの活用が重大インシデントを減らすことが研究で示されています。「わかっているからリストは不要」ではなく、「わかっているからこそリストを使う」姿勢を持ちましょう。',action:'あなたの部署の環境整備のチェックリストを、今すぐ見直してみましょう。' },
+  30:{chapter:'Team Building',keyMessage:'労働力の流動化で「暇」をなくす',insight:'自分の部署が暇な時、忙しい他部署や他院へヘルプに行くなど、労働力を流動化させましょう。組織全体で「暇人材」を減らし、生産性を最大化することが重要です。',enriched:'「うちの部署は暇だけど、あっちは忙しそう」という状況を放置することは、組織のロスです。人員の流動化は「助け合いの文化」を育て、複数の業務を経験することでスタッフ自身のスキルアップにも繋がります。「手が空いたら声をかける」という小さな行動が、組織全体の生産性を大きく底上げします。',action:'手が空いた時、ただ待機していませんか？「手伝えることはないですか？」と声をかけ、チーム全体の負担を減らしましょう。' },
+  31:{chapter:'Team Building',keyMessage:'TTP：成功例を徹底的にパクれ',insight:'自己流で悩む時間は無駄です。グループ内には既に成功している事例があります。良い取り組みは「徹底的にパクる（TTP）」。それが最短で成果を出すコツです。',enriched:'「うちは特殊だから」「環境が違うから」という言い訳をやめましょう。成功事例には必ず再現できる「本質」が含まれています。まず完全に真似てみる。その上で自院の状況に合わせてカスタマイズする。これが最速で成果を出す王道です。イノベーションは「真似」の積み重ねから生まれます。',action:'他院の成功事例を聞いて「うちは違うから」と壁を作っていませんか？まずは素直に真似てみましょう。' },
+  32:{chapter:'Team Building',keyMessage:'アメーバ経営：小集団で採算をとる',insight:'巨大な組織の一部ではなく、小さなチーム（アメーバ）ごとに独立して採算を考える経営手法です。一人ひとりが経営者意識を持ち、自分たちの収支に責任を持ちましょう。',enriched:'京セラの稲盛和夫が生み出した「アメーバ経営」は、JALの再建にも活用された実績ある手法です。大きな組織でも、小さな単位（クリニック・部署）で採算を把握することで、全員が「自分ごと」として経営に参加できます。「自分の部署が黒字か赤字か」を意識することが、経営参画の第一歩です。',action:'あなたのチームは黒字ですか？赤字なら、明日から何を改善しますか？' },
+  33:{chapter:'Communication',keyMessage:'情報の共有・ホウレンソウ',insight:'事故やミスは恥ずかしいことではありません。大切なのは、ミスから学び、次のミスを起こさないための情報共有と対策です。個々の知恵を集め、「集合天才」を作り出すことで、グループ全体の質を高めます。',enriched:'「ホウレンソウ（報告・連絡・相談）」は社会人の基本ですが、それだけでは不十分です。最近では「おひたし（怒らない・否定しない・助ける・指示する）」という上長側の心構えも重視されています。報告しやすい文化を作ることが、インシデントの早期発見と組織改善につながります。',action:'最近経験した「小さなミス」を、他のクリニックに共有することで防げる「大きなミス」は何でしょうか？' },
+  34:{chapter:'Communication',keyMessage:'朝礼の目的',insight:'朝礼は単なる連絡の場ではなく、チームの意識を統一し、患者様へのファーストコンタクトの質を高める重要な時間です。インシデント共有や予約確認、理念の唱和を行い、全員参加で士気を高めましょう。',enriched:'研究によると、朝一番の「チームの整列」が、その日のパフォーマンスと安全性に大きく影響することがわかっています。医療現場での朝礼は、航空機のブリーフィングに近い意味を持ちます。「今日の特記事項は何か」「懸念される患者様はいるか」を共有することで、チーム全体が一枚岩になります。',action:'あなたのクリニックの朝礼は、患者様への「最高のファーストコンタクト」に繋がっていますか？理想的な台本を作成し、実践しましょう。' },
+  35:{chapter:'Communication',keyMessage:'口コミの逆を目指せ',insight:'「待たされた」「対応が悪い」という悪い口コミの真逆を行けば、それは「感動」に変わります。「待たされたけど、気遣いが嬉しかった」と言われるような、逆転の発想を持ちましょう。',enriched:'ディズニーランドのキャストは「ネガポジ変換」の達人です。「〇〇はできません」を「〇〇ならできます」に言い換え、制約の中でも感動を生み出します。待ち時間というネガティブ要素を、「気遣い・情報提供・温かい一言」でポジティブに変換する発想こそ、プロのサービス精神です。',action:'あなたが患者様なら、どんな対応をされたら「ここに決めた」と思いますか？その行動を今日一つ実践してみましょう。' },
+  36:{chapter:'Communication',keyMessage:'口コミは最良の目安箱',insight:'ネットに悪口を書かれるのは、院内で不満を吐き出す場所がなかったからです。書きこまれる前に気づき、対処するが吉。Google口コミは患者様の無言の期待を知るツールです。',enriched:'Googleの低評価レビューのほとんどは「待ち時間」「説明不足」「スタッフの態度」の3つに集中しています。これらはすべて、事前の対策と丁寧なコミュニケーションで防げることです。悪い口コミを恐れるのではなく、「改善の羅針盤」として積極的に活用しましょう。',action:'不満そうな表情の患者様を見かけたら、スルーしていませんか？「何かお手伝いできることはございますか？」の一言が、悪評を防ぎます。' },
+  37:{chapter:'Communication',keyMessage:'期待との乖離がクレームを生む',insight:'クレームの多くは「もっと早く終わると思ったのに」「もっと詳しく聞けると思ったのに」という期待とのギャップから生まれます。事前に見通しを伝え、期待値を調整することがプロの技です。',enriched:'「期待値マネジメント」はサービス業の核心です。予め「30分お待ちいただきます」と伝えれば、20分で呼ばれた時に「早かった！」と好印象になります。逆に何も言わずに30分待たせると不満になります。同じ30分でも、伝え方ひとつで体感が変わる。これがプロのコミュニケーション技術です。',action:'「混んでおりお待ちいただきます」ではなく「検査と診察で〇分ほどかかります」「〇人目です」と、具体的な見通しを伝えられていますか？' },
+  38:{chapter:'Communication',keyMessage:'効率化で生まれた時間を、患者様へ',insight:'DXやマニュアル化で業務を効率化するのは、楽をするためではありません。そこで生まれた余裕を、患者様への丁寧な説明や、温かい声がけに投資するためです。',enriched:'効率化の目的を履き違えてはいけません。「楽をするため」ではなく「本当に大切なことに時間を使うため」が正しい目的です。電子カルテや自動受付により事務処理時間が減ったなら、その時間で患者様との会話を増やす。それが「効率化の先にある価値」です。',action:'今日、事務作業の手を止めて、患者様の目を見て話す時間をどれくらい持てましたか？効率化の先にある目的を忘れずに。' },
+  39:{chapter:'Communication',keyMessage:'「受付対応が最悪」と言わせない',insight:'医師の腕が良くても、受付の対応一つでクリニックの評価は地に落ちます。あなたはクリニックの顔であり、最初の印象と最後の印象を決める重要なポジションです。',enriched:'心理学の「初頭効果」と「近接効果」によると、人は最初と最後の印象を特に強く記憶します。受付は患者様の第一印象と最後の印象の両方を担う、最も重要な接点です。「受付の笑顔に癒された」という口コミが、クリニック全体のブランドを作ります。',action:'忙しい時ほど、無表情になっていませんか？電話越しでも伝わる「笑声（えごえ）」を意識しましょう。' },
+  40:{chapter:'Communication',keyMessage:'言いにくいことこそ、トーク技術（台本）で',insight:'次回の来院予約や自費診療の提案など、言いにくいことこそマニュアル化されたトーク技術が役立ちます。「皆様に確認しておりますが」といった枕詞を使い、自然に案内しましょう。',enriched:'「台本通りに話すのは不誠実では？」と感じる方もいるかもしれません。しかし台本は「型」であり、型を習得することで自然なコミュニケーションの土台ができます。スポーツの基本フォームと同じです。型をしっかり身につけた上で、相手に合わせた応用ができるようになります。',action:'提案を躊躇して、患者様の機会損失になっていませんか？台本（スクリプト）通りに話すことから練習し、始めてみましょう。' },
+  41:{chapter:'Communication',keyMessage:'医師の個体差と対応',insight:'全てを備えたパーフェクトな医師はいません。グループに参画する医師には個体差があることを理解し、「なんでやってくれないんだろう」ではなく、「できるように私たちが動かす」というマインドセットが必要です。',enriched:'医師も人間です。得意・不得意があり、コミュニケーションスタイルも様々です。スタッフが医師の特性を把握し、「この先生はこのタイミングで・この伝え方で」というアプローチを工夫することで、チーム全体のパフォーマンスが上がります。医師をコントロールするのではなく、「最高の環境を用意する」という発想で関わりましょう。',action:'あなたのクリニックの医師の「得意・苦手」をリストアップし、「苦手」を補完するための具体的なサポート策を考えてみましょう。' },
+  42:{chapter:'Communication',keyMessage:'医師もチームの一員。医師の「いいなり」や「特別扱い」はしなくていい',insight:'医師といえども、組織の一員です。「先生がやってくれない」と嘆くのではなく、当院の方針やルールを伝え、医師がパフォーマンスを発揮できるようコントロールするのがスタッフの役割です。',enriched:'過剰な「先生扱い」は、医師自身にとってもプレッシャーになることがあります。組織のルールを共有し、対等なプロとして関わることで、医師も働きやすくなります。「この院ではこうしています」と明確に伝えることは、プロとしての礼儀です。',action:'医師に対して遠慮しすぎていませんか？患者様のため、組織のために必要なことは、プロとして毅然と伝え、協力体制を築きましょう。' },
+  43:{chapter:'Communication',keyMessage:'ルールで医師をコントロールせよ',insight:'予約枠や検査の手順などを、医師個人の気分や好みに委ねてはいけません。「当院ではこうしています」という明確なルール（マニュアル）で運用し、組織としての統一性を保ちましょう。',enriched:'属人化した運営では、医師が変わるたびにやり方が変わり、患者様が混乱します。「院のルール」が明確であれば、新しい医師が入ってもスムーズに稼働できます。これは医師を縛るのではなく、患者様と組織を守るための重要な仕組みです。',action:'「前のやり方だから」「医師の機嫌が悪いから」とルールを曲げて運営していませんか？基準を守ることが、結果的に働きやすい環境を作ります。' },
+  44:{chapter:'Communication',keyMessage:'待ち時間は「謝罪」ではなく「気配り」で埋める',insight:'ただ「すみません」と謝るだけでは解決しません。「今、前の患者様の処置中です」「あと〇番目です」と状況を伝え、気にかけていることを示すだけで、体感待ち時間は短くなります。',enriched:'「時間の知覚」は心理状態に大きく依存します。何もわからずに待つ時間は長く感じ、「あと10分」と伝えられた待ち時間は短く感じます。情報提供と声がけによって、患者様の不安を和らげることが、クレームを防ぐ最も簡単な方法です。',action:'待合室の患者様を「景色」のように漠然と見ていませんか？お待たせしている方への能動的な声がけを徹底しましょう。' },
+  45:{chapter:'Communication',keyMessage:'アンケートで「隠れた声」を拾う',insight:'直接文句を言わない「サイレントクレーマー」が一番怖い存在です。アンケートを積極的に活用し、言葉にされない小さな不満や要望を拾い上げ、改善に繋げましょう。',enriched:'苦情を言う患者様は全体の約5%に過ぎず、残りの95%は何も言わずに「他に移る」と言われています。アンケートは、この沈黙のマジョリティの声を聞く貴重な窓口です。厳しい意見を「クレーム」ではなく「無料コンサルティング」として歓迎しましょう。',action:'アンケート結果、口コミを「ふーん」と読み流していませんか？厳しい意見こそ、改善の宝の山です。' },
+  46:{chapter:'Communication',keyMessage:'クレド（信条）を体現せよ',insight:'私たちの理念や行動指針は、壁に貼っておく飾りではありません。迷った時の判断基準となります。「患者様目線」「プロ意識」。日々の行動がクレドに沿っているか自問自答してください。',enriched:'リッツカールトンの従業員は「クレド」を常に携帯し、判断に迷った時の基準にしています。理念は額に飾るものではなく、行動の中に生きるものです。今日一日の自分の言動が、MMCのクレドを体現していたかを毎晩振り返る習慣を持ちましょう。',action:'今日のあなたの行動は、後輩に見せても恥ずかしくない、胸を張れるものでしたか？今日の行動でよかった点と悪かった点を記載してください。' },
+  47:{chapter:'Strategy & KPI',keyMessage:'2026年の課題は「収益の最大化」',insight:'今年度の必達目標は「収益の最大化」です。これを実現するには、「売上の最大化」と「コストの最小化」の2つを徹底的に追求する以外に道はありません。',enriched:'収益最大化は「患者様から搾取する」ことではありません。より多くの方に必要な医療を届け、不要なコストを削減し、組織の持続性を高めることです。利益がある組織だけが、設備を更新し、スタッフを厚遇し、地域に貢献し続けられます。',action:'売上を上げるための集客や単価アップ、無駄な経費の削減。あなたの部署で今日からできる具体的なアクションは何ですか？' },
+  48:{chapter:'Strategy & KPI',keyMessage:'LTV（顧客生涯価値）を高めよ',insight:'LTV（life time Value）とは、一人の患者様がその生涯において当院にもたらす売上のことです。患者様単価×来院頻度×生涯の来院期間。単価は高く、頻度は多く、長い間来てもらうことが大切。一度きりの診療で終わらせず、信頼関係を築き、長く通い続けていただける関係性を目指しましょう。',enriched:'新患獲得コストは既存患者様維持コストの5〜7倍とも言われます（1:5の法則）。つまり、既存の患者様に継続して来院していただくことが、最も効率的な収益戦略です。「また来てもらう」ための関係性づくりこそ、LTV最大化の鍵です。',action:'目の前の患者様に対し、「また来たい」と思わせる対応ができていますか？次回の来院に繋がる種まきを忘れないでください。' },
+  49:{chapter:'Strategy & KPI',keyMessage:'勝利の方程式：通院期間 × 診療単価 × 来院頻度',insight:'クリニック経営におけるLTVは、この3つの要素の掛け算で決まります。長く通っていただくか、単価を上げるか、頻度を上げるか。この3点を常に意識して行動してください。',enriched:'この3要素は同時に改善できます。例えば「定期管理の重要性を丁寧に説明する（期間延長）」「自費メニューを適切にご案内する（単価向上）」「1ヶ月後の再診を提案する（頻度向上）」。すべては患者様への誠実な医療の提供とセットです。',action:'あなたの今の業務は、この3つの要素のうちどれに貢献していますか？意識的に数値を上げる工夫を凝らしましょう。' },
+  50:{chapter:'Strategy & KPI',keyMessage:'「3ヶ月処方」はLTVの損失である',insight:'要望だからといって安易に長期処方していませんか？それは経過観察の機会を減らし、経営的にもLTVを低下させる行為です。医学的な必要性を踏まえ、適切な頻度を提案しましょう。',enriched:'3ヶ月に1回の受診と1ヶ月に1回の受診では、患者様の病態管理の精度が大きく変わります。副作用の早期発見、生活習慣の確認、新たな症状の気づき——これらは定期的な受診があって初めて機能します。「患者様のため」と「クリニックの安定収益」は、ここでも一致しています。',action:'「とりあえず3ヶ月分」と流していませんか？患者様の健康管理のためにも、こまめな受診の重要性を説明しましょう。' },
+  51:{chapter:'Strategy & KPI',keyMessage:'攻めの提案「1ヶ月後に確認させてください」',insight:'次回の予約を患者任せにせず、「状態を確認したいので」「新しい薬の副作用がないか確認したいので」と、こちらから明確な理由を持って来院を促すトーク技術を身につけましょう。',enriched:'「また何かあればどうぞ」は一見親切に聞こえますが、患者様に「悪化して気付いた時だけ来ればいい」というメッセージを暗黙的に伝えています。プロアクティブな再診提案は、予防医療の実践であり、患者様への真の配慮です。',action:'「また何かあったら」ではなく「次は〇〇のタイミングでご来院ください」と具体的な提案を。' },
+  52:{chapter:'Strategy & KPI',keyMessage:'サブスクを強化せよ',insight:'携帯・ネトフリ…世の中はサブスクに溢れています。医療においてはCPAP、在宅医療、生活習慣病管理、リハビリなどの「サブスクリプション型」サービスは経営の安定基盤となります。これらの対象患者様を大切にしましょう。',enriched:'毎月一定の収益が見込める「継続管理型患者様」は、クリニックの経営安定に不可欠です。生活習慣病・CPAP・在宅医療の患者様は、適切な管理を続けることで健康を維持できます。これらの患者様を丁寧にフォローすることは、医療的にも経営的にも「正解」です。',action:'継続的な管理が必要な患者様に対し、当院の定期管理サービスのメリットを正しく伝えられていますか？' },
+  53:{chapter:'Strategy & KPI',keyMessage:'チャンスを逃すな、アップセルの提案',insight:'必要な検査、ワクチン、自費治療（点滴やAGAなど）の案内は、患者様の健康を守るための重要な提案です。自費だからといって遠慮せず、適切なタイミングで情報提供を行い、単価アップを図りましょう。',enriched:'「言われなかったから知らなかった」で患者様が健康機会を失うことは、スタッフにとっても本意ではないはずです。適切な提案は「押し売り」ではなく「情報提供」です。患者様自身が選択できるよう、必要な情報を丁寧にお伝えしましょう。',action:'検査や自費メニューの案内チラシやPOPは活用できていますか？待ち時間などを利用し、患者様の関心を喚起しましょう。' },
+  54:{chapter:'Strategy & KPI',keyMessage:'減収は罪である',insight:'増収増益が企業の基本です。減収になった場合、環境のせいにするのではなく、その原因をしっかり検証し突き止め、時代やニーズにあった対策と変革を講じなければ、プロとして「失格」です。',enriched:'「景気が悪いから」「季節要因だから」——外部環境を言い訳にするのは簡単です。しかし同じ条件下でも成長しているクリニックは必ずあります。減収の原因を内部に探し、徹底的に分析し、行動を変える。この姿勢こそが、プロの経営者意識です。',action:'目標未達の際、「仕方ない」で済ませていませんか？なぜ届かなかったのか、次はどうするのか、執念を持って考え抜きましょう。' },
+  55:{chapter:'Strategy & KPI',keyMessage:'増益の結果が、ボーナスと昇給の原資となる',insight:'賞与は空から降ってくるものではありません。私たち全員の努力で生み出した「利益」から分配されるものです。マンモスの肉（利益）を大きくし、みんなで分け合いましょう。',enriched:'「頑張ったらその分だけ返ってくる」という実感が、職場のモチベーションを高めます。自分の努力が組織の業績に直結し、それが給与・賞与に反映される——この連鎖が見えている人は強いです。あなたの今日の行動が、来月・来年の自分の財布に繋がっています。',action:'自分の頑張りが、自分たちの給与や賞与に直結しているという意識を持っていますか？全員で豊かな成功を目指しましょう。' },
+  56:{chapter:'Strategy & KPI',keyMessage:'数字は絶対的なものさし',insight:'主観的な「頑張っています」という「感想」は給与・ボーナス評価の対象となりません。頑張った結果である、売上、患者様数、検査件数など、客観的な「数値」で語る癖をつけましょう。数字は嘘をつきません。',enriched:'「私は一生懸命やっています」ではなく「今月の検査紹介件数は○件、先月比○%増です」と語れる人材は、どの組織でも評価されます。数字は言い訳を許さない透明な基準です。数字で語り、数字で改善策を立て、数字で成果を確認する——これがデータドリブンな働き方です。',action:'現在設定された目標に対し、進捗はどうでしょうか？実績を具体的な数字で即答できるようにしましょう。' },
+  57:{chapter:'Strategy & KPI',keyMessage:'原価を見直せ。コスト意識を持つ',insight:'利益を生むには、売上アップだけでなくコストダウンも重要です。無駄な在庫、光熱費、そして最大のコストである「時間」。全ての活動にコスト意識を持ちましょう。',enriched:'コスト意識は「節約」ではなく「最適化」です。必要なものには適切に投資し、不要なものは削減する。「自分の財布から出すとしても使うか？」という問いは、優れた判断基準です。特に「時間」というコストは見えにくいですが、最も価値ある資源です。',action:'その印刷、その備品発注、本当に必要ですか？「自分の財布から出すとしても買うか？」を判断基準に。わからないことを調べ、効率を考え、聞く勇気も大切。' },
+  58:{chapter:'Strategy & KPI',keyMessage:'PDCAを回せ。日報はそのためにある',insight:'日報は単なる活動報告書ではありません。今日の計画（Plan）を実行（Do）し、その結果を評価（Check）して、明日どうするか（Action）を考えるためのツールです。',enriched:'多くの人が「Do→Do→Do」の繰り返しに陥っています。PDCAの「Check」と「Action」を怠ると、同じ失敗を繰り返し続けます。日報を「証拠書類」ではなく「思考ツール」として使いこなすことで、あなたの成長スピードは劇的に上がります。',action:'昨日の反省を、今日の業務に活かせていますか？同じ失敗を繰り返さない、今日より明日が良くなるためのPDCAです。' },
+  59:{chapter:'Strategy & KPI',keyMessage:'期限と約束を守る。それがプロの仕事',insight:'提出物の期限、会議の開始時間、患者様に連絡するなどの約束。小さな約束を守れない人は、大きな仕事も任せられません。規律を守ることが、チームの信頼関係の土台です。',enriched:'プロと素人の最大の違いのひとつは「約束の確実性」です。プロは結果を約束し、それを期日通りに届けます。「ちょっと遅れた」「忙しかった」は言い訳でしかありません。小さな約束を積み重ねることが、やがて大きな信頼と仕事につながります。',action:'「あとでやろう」と後回しにしている課題は思いもよらぬ遅延の原因になります。期限ギリギリではなく、余裕を持って完了させましょう。' },
+  60:{chapter:'Strategy & KPI',keyMessage:'現在の数値を即答できるか？',insight:'自院の1日あたりの患者様数、売上、注力している検査の件数。現状を知らずして、改善の作戦は立てられません。常に最新の数字を頭に入れておきましょう。',enriched:'軍事戦略家クラウゼヴィッツは「自分の状況を知ることが戦略の出発点」と言いました。ビジネスも同様です。「今月の患者数は何人？」「先月比は？」に即答できない人は、改善策を立てることができません。数字を知ることが、経営参画の第一歩です。',action:'先月の実績と、今月の着地見込みを知っていますか？数字に関心を持つことから経営参画は始まります。' },
+  61:{chapter:'Strategy & KPI',keyMessage:'時間帯予約のご案内、運用ルールを守る',insight:'「予約枠」は私たちの貴重な商品です。医師の気分で枠を無駄にしてはいけません。患者様の待ち時間をできるだけ少なくするための運用が、安定した経営とスムーズな診療を生みます。',enriched:'予約枠管理は「時間の在庫管理」です。空き枠は「売れ残った商品」と同じ——一度過ぎると取り戻せない損失です。比較的空いている時間帯に患者様を誘導することで、待ち時間を分散させ、全体の満足度が上がります。データを活用した戦略的な予約管理を意識しましょう。',action:'比較的すいている時間帯に予約枠を設定しご案内できていますか？逆に、無理に詰め込んで待ち時間を増やしていませんか？' },
+  62:{chapter:'Strategy & KPI',keyMessage:'目標未達なら、即座に対策を',insight:'目標に届かないこと自体よりも、未達の原因を分析せず、また対策を打たないことの方が問題です。なぜ届かなかったのか？次はどうするのか？執念を持って考え抜きましょう。',enriched:'「頑張ったけどダメだった」で終わる人と、「なぜダメだったかを分析し、方法を変えて再挑戦する」人——この差が、1年後・5年後に大きな実力差を生みます。失敗は「データ」です。次の成功のための貴重な情報として活用しましょう。',action:'「私たちは頑張ったんだけどね」という傷の舐め合いで終わらせていませんか？達成するまで方法を変えて挑み続けましょう。' },
+  63:{chapter:'Future & Innovation',keyMessage:'ドミナント戦略：面で地域を制圧する',insight:'特定の地域に集中してクリニックを展開することで、認知度とスタッフや資材の流動性を高め、効率的な運営を行います。「ここの地域といえばMMC」と言われる存在を目指します。',enriched:'ドミナント戦略はコンビニ業界で実証済みです。一定エリアに集中出店することで、ブランド認知度が上がり、配送・スタッフ教育のコストが下がります。クリニックでも同様に、近接するグループ院同士が連携することで、患者様の紹介・専門科への誘導・スタッフのヘルプ体制が機能します。',action:'近隣のグループ院と連携をとれていますか？「点」ではなく「面」で地域を支える意識を持ちましょう。' },
+  64:{chapter:'Future & Innovation',keyMessage:'コアクリニック ＋ 在宅クリニック',insight:'外来機能を持つ「コア」と、機動力のある「在宅サテライト」を組み合わせることで、通院から看取りまで一気通貫した医療を提供できます。これが私たちの勝ち筋です。',enriched:'超高齢社会では「病院で治療→在宅で継続管理」という流れが加速しています。外来で信頼関係を築いた患者様が在宅医療に移行する時、「いつも診てもらっているクリニックの先生たちが来てくれる」という安心感は他では得られない価値です。これがMMCの一気通貫医療モデルの強みです。',action:'外来に来られなくなった患者様を、スムーズに在宅部門へ繋げられていますか？切れ目のない連携を意識しましょう。' },
+  65:{chapter:'Future & Innovation',keyMessage:'在宅診療のセントラル化',insight:'保険請求・人事・営業などの機能を本部に集約することで、現場の医療スタッフは診療に専念できます。役割分担を明確にし、それぞれの専門性を最大限に発揮する体制を作ります。',enriched:'「何でも現場でやる」は一見勤勉に見えますが、実は非効率です。保険請求の専門家が効率よく処理できる業務を、現場の看護師が片手間でやると時間も精度も下がります。セントラル化によって「現場は医療に専念」「本部は運営に専念」という分業が実現し、組織全体の質が向上します。',action:'現場で抱え込んでいる非効率な事務作業はありませんか？私たちの本分である「医療提供」に集中できる環境を整えましょう。' },
+  66:{chapter:'Future & Innovation',keyMessage:'ピンピンコロリを支えるテストステロン療法',insight:'超高齢社会において、健康寿命を延ばす鍵は「活力」です。テストステロン療法は、高齢者の生きる意欲、生活の質を高め、介護予防に貢献できる、私たちが注力すべき医療です。',enriched:'「ピンピンコロリ（PPK）」——元気に長生きして、最後は苦しまずに逝くという理想の老い方。テストステロン（男性ホルモン）は加齢とともに低下し、筋力・気力・性機能の低下をもたらします。適切な補充療法により、高齢者が活力を取り戻し、自立した生活を続けられる期間を延ばすことが、介護コスト削減にも直結します。',action:'歩行能力の落ちた、元気がない高齢の患者様に、「年齢相応」「歳だから仕方ない」で済ませず、テストステロン療法の選択肢を提案できていますか？' },
+  67:{chapter:'Future & Innovation',keyMessage:'テストステロン療法について',insight:'「在宅・外来・リハビリ × テストステロン療法」は当院の付加価値創造の核となる事業戦略です。保険・自費の適用を理解し、具体的な営業戦略を持ってご案内しましょう。',enriched:'テストステロン補充療法（TRT）は保険適用（男性性腺機能低下症）と自費の両面があります。効果として筋力維持・認知機能向上・活力改善・性機能改善などが挙げられます。患者様への説明時は「なぜ必要か」「どう効くか」「どう使うか」を明確に伝える準備をしましょう。',action:'あなたは、テストステロン療法について、患者様に自信を持って効果とメリットを説明できますか？' },
+  68:{chapter:'Future & Innovation',keyMessage:'SAS（睡眠時無呼吸症候群）の取り組み',insight:'SASは、生活習慣病や不眠、頻尿との関連が深い疾患です。台本を用いて、医師含むスタッフ全員がSASを勉強し、誰でもご案内できる体制を維持することが重要です。',enriched:'SAS（睡眠時無呼吸症候群）は日本で推定300〜400万人の患者がいると言われますが、実際に治療を受けているのはその一割以下と言われています。大いなる「未診断・未治療の患者群」がいるということです。受診のきっかけは「いびきが酷い」「日中眠い」など、日常の些細な訴えです。アンテナを立てて患者様の言葉に耳を傾けましょう。',action:'あなたのクリニックでは、SASの拾い上げや検査のご案内を継続できていますか？できていない場合、原因は何ですか？' },
+  69:{chapter:'Future & Innovation',keyMessage:'メンズヘルス・フェムテックへの挑戦',insight:'EDやAGA、更年期障害など、人には言いにくい悩みに寄り添う自費診療は、潜在的なニーズが巨大です。保険診療だけでなく、新しい収益の柱として育てていきます。',enriched:'「言い出せない悩み」に寄り添えるクリニックは、患者様にとって替えの効かない存在になれます。ED・AGA・女性の更年期——これらは生活の質（QOL）に直結する重要な問題ですが、恥ずかしさから受診を躊躇する方が多い。「ここなら相談できる」という安心感を提供することが、差別化の鍵です。',action:'新しい治療やサービスについて勉強していますか？患者様の隠れたニーズに気づける感度を高めましょう。' },
+  70:{chapter:'Future & Innovation',keyMessage:'町医者を守るM&A戦略',insight:'後継者不足で閉院の危機にあるクリニックを継承し、「みらい」ブランドのノウハウで再生させます。これは単なる拡大ではなく、地域医療を守るための社会貢献です。',enriched:'2030年に向けて、日本では多くの開業医が後継者不在のまま廃院を余儀なくされると予測されています。そのクリニックで長年診てもらっていた患者様は行き場を失います。MMGのM&A戦略は「クリニックを買う」のではなく「地域医療の灯を守る」という崇高なミッションです。',action:'新しくグループに加わった仲間を歓迎し、ノウハウを惜しみなく共有できていますか？' },
+  71:{chapter:'Future & Innovation',keyMessage:'医療・介護・保育の課題を解決する',insight:'少子高齢化や医療崩壊など、国だけでは解決できない課題が山積しています。私たちは民間の力とスピード感で、これらの社会課題に挑み、解決策を提示し続けます。',enriched:'国や行政は大きな課題に対してどうしても動きが遅くなります。民間企業は機動力があり、現場の声を素早くサービスに反映できます。医療・介護・保育という生活に最も密着した3つの領域を同時に支えられる組織は少ない。MMGはそのポジションを目指しています。',action:'目の前の仕事が、社会を良くすることに繋がっていると信じていますか？私たちの仕事には大きな意義があります。' },
+  72:{chapter:'Future & Innovation',keyMessage:'100院、そして1000院へ',insight:'私たちのビジョンは壮大です。規模を拡大することで、より多くの地域に安心を届け、働くスタッフにもより良い環境を提供できるようになります。目指すは業界のスタンダードです。',enriched:'規模の拡大は「大きさの追求」ではなく「影響力の拡大」です。100院になれば100の地域に安心を届けられる。1000院になれば、MMCの理念と医療クオリティが日本の新しいスタンダードになります。あなたが今日丁寧に仕事することが、このビジョン実現の一歩です。',action:'「自分には関係ない」と思っていませんか？組織の成長は、あなたの人生の可能性も広げます。' },
+  73:{chapter:'Future & Innovation',keyMessage:'AIとのつきあいかた',insight:'ChatGPT、GEMINIなどのAIは効率化の武器となりますが、100%信用してはいけません。問いの質やオーダー方法が悪かったり、データや解決策が集められないと、嘘をつきます（ハルシネーション）。必ず人間が「裏どり」「検証」を行い、自分の言葉で仕上げる責任を持ち完成させることを習慣づけましょう。特に患者様説明資料・ご案内には慎重に対応を。',enriched:'AIは優秀なアシスタントですが、「責任を持つ人間」の代わりにはなりません。AIが出した答えを鵜呑みにして患者様に伝えてしまうと、誤情報による医療上のリスクにもなりかねません。AIを使いこなす力は、「質の良い問いを立てる力」と「出力を批判的に検証する力」の掛け合わせです。',action:'今日、業務でAIを活用しましたか？その際、内容の正確性を「検証」「裏どり」しましたか？' },
+  74:{chapter:'Future & Innovation',keyMessage:'人材採用：育つ土壌と水質管理',insight:'良い人材は偶然やってくるものではありません。入職した人が育つ「土壌」を作り、また働きたいと思える職場の良い「水質」を管理することが採用・教育の鍵です。',enriched:'良い植物を育てるには、良い土と良い水が必要です。どんな優秀な人材も、職場環境が悪ければ枯れてしまいます。採用で悩む前に、「今の職場は人が育つ環境か」を問い直すことが先決です。現在のスタッフが「ここで働いていて良かった」と言える職場こそ、採用力の源泉です。',action:'あなたの部署は、新人が「ここで働きたい」と思える土壌と水質になっていますか？' },
+  75:{chapter:'Future & Innovation',keyMessage:'DX化で業務をスリムに',insight:'新しいシステムやツールの導入を面倒がっていませんか？DXは業務を効率化し、ミスを減らす強力な武器です。変化を受け入れ、使いこなすスキルを磨きましょう。',enriched:'DX（デジタルトランスフォーメーション）の本質は「デジタル化」そのものではなく、「デジタルを使って仕事のやり方・価値の提供方法を変革すること」です。電子カルテ、オンライン予約、AIスクリーニング——これらを「めんどくさい」と思わず、「どう使えば患者様とスタッフが幸せになるか」という視点で捉えましょう。',action:'手書きやアナログで非効率な作業を残していませんか？「もっと楽にできる方法はないか」と常に疑いましょう。' },
+  76:{chapter:'Future & Innovation',keyMessage:'３人の石工——あなたはどの石工ですか？',insight:'ピーター・ドラッカーの有名な問いです。同じ仕事をしていても、その仕事に対する「意味づけ」によって、充実感・成長速度・周囲への影響力はまったく変わってきます。76日間の研修を終えたいま、もう一度自分に問い直してみましょう。',enriched:'研修初日に読んだ石工の話——お金のために石を切る一人目、技術を磨く二人目、教会を建てるという大義を持つ三人目。どれが正しい・間違いということではありません。大切なのは、あなた自身がどこを目指したいかを「自分の言葉で語れるか」です。研修を通じて、あなたの「なぜ働くか」は変わりましたか？深まりましたか？その変化こそが成長の証です。三人目の石工のように、地域医療という「大聖堂」を共に建てていきましょう。',action:'研修初日に書いた「石工の答え」を見返してください。今のあなたはどんな言葉で答えますか？上長に、そして自分自身に、声に出して伝えてみましょう。' },
+  77:{chapter:'Future & Innovation',keyMessage:'未来は自分たちの手で創る',insight:'グループ名の由来であり、私たちのスローガンです。今私たちが頑張ることは、将来の自分たち、そして次の世代が安心して暮らせる社会を作ることに、つながっています。',enriched:'Day 77——77日間の研修、おつかれさまでした。あの日の「初めての一歩」から、あなたはどれだけ成長しましたか？理念を語れる人に、行動で示せる人に、仲間に影響を与えられる人に。あなた自身の「MIRAI」は、今日から本当に始まります。さあ、地域医療の未来を、共に創っていきましょう。',action:'いま、あなたができることは何ですか？小さな一歩が、未来を変える力になります。' },
+};
+
+let profile={clinic:'',job:'',name:'',email:''};
+const state={
+  1:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  2:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  3:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  4:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  5:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  6:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  7:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  8:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  9:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  10:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  11:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  12:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  13:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  14:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  15:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  16:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  17:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  18:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  19:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  20:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  21:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  22:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  23:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  24:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  25:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  26:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  27:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  28:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  29:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  30:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  31:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  32:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  33:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  34:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  35:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  36:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  37:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  38:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  39:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  40:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  41:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  42:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  43:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  44:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  45:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  46:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  47:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  48:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  49:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  50:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  51:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  52:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  53:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  54:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  55:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  56:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  57:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  58:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  59:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  60:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  61:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  62:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  63:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  64:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  65:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  66:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  67:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  68:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  69:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  70:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  71:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  72:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  73:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  74:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  75:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  76:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+  77:{thought:'',report:'',aiDraft:'',managerFeedback:'',status:'none',_generating:false,submittedAt:null,feedbackAt:null},
+};
+const ALERT_DAYS = 2; // この日数以上経過でアラート
+
+// ============================================================
+// ▼ Google Apps Script の Web App URL をここに貼り付ける ▼
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzoPip5yxHHSnbEaKqyCdKQMuP-bPmD_vnlVWMZ31RcEth3vyS6cA7ZVQla8xyGJaIk/exec';
+// ============================================================
+
+let currentDay=1, currentMode='staff'; // staff only
+
+function onClinicChange(){
+  const c=document.getElementById('pClinic').value;
+  const j=document.getElementById('pJob');
+  j.innerHTML='<option value="">— 選択してください —</option>';
+  if(c&&CLINICS[c]){CLINICS[c].forEach(x=>{const o=document.createElement('option');o.value=x;o.textContent=x;j.appendChild(o);});j.disabled=false;}
+  else j.disabled=true;
+}
+
+function saveProfile(){
+  const clinic=document.getElementById('pClinic').value;
+  const job=document.getElementById('pJob').value;
+  const name=document.getElementById('pName').value.trim();
+  const email=document.getElementById('pEmail').value.trim();
+  if(!clinic){alert('クリニックを選択してください。');return;}
+  if(!job){alert('職種を選択してください。');return;}
+  if(!name){alert('氏名を入力してください。');return;}
+  profile={clinic,job,name,email};
+  applyProfileToUI();
+  persistSave();
+  launchIntro();
+}
+
+function editProfile(){
+  document.getElementById('pClinic').value=profile.clinic;
+  onClinicChange();
+  setTimeout(()=>{document.getElementById('pJob').value=profile.job;},50);
+  document.getElementById('pName').value=profile.name;
+  document.getElementById('pEmail').value=profile.email;
+  persistClear();
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('profileScreen').style.display='flex';
+}
+
+function getInitials(n){const c=n.replace(/\s/g,'');return c.length>=2?c.slice(-2):c;}
+
+function applyProfileToUI(){
+  document.getElementById('staffAvatar').textContent=getInitials(profile.name);
+  document.getElementById('staffChipName').textContent=profile.name;
+  document.getElementById('staffChipMeta').textContent=profile.clinic+'　'+profile.job;
+}
+
+function staffBanner(){
+  return `<div class="staff-info-banner">
+    <div class="staff-info-avatar">${getInitials(profile.name)}</div>
+    <div>
+      <div class="staff-info-name">${profile.name}</div>
+      <div class="staff-info-meta">
+        <span>${profile.clinic}</span><span class="staff-info-sep">｜</span><span>${profile.job}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+
+// ── ALERT HELPERS ──────────────────────────────────────────────────
+function daysSince(ts) {
+  if (!ts) return null;
+  return (Date.now() - ts) / (1000 * 60 * 60 * 24);
+}
+
+
+function getAlerts() {
+  // Returns array of alert objects for current state
+  const alerts = [];
+  for (let d=1;d<=77;d++) {
+    const s = state[d];
+    const days = DAYS[d];
+    // ① スタッフ未提出遅延：draft or none で submittedAt が古い（draftsの場合のみ）
+    if (s.status === 'draft' && s.submittedAt) {
+      const elapsed = daysSince(s.submittedAt);
+      if (elapsed !== null && elapsed >= ALERT_DAYS) {
+        alerts.push({ type:'staff-overdue', day:d, elapsed, label:`Day ${d}`, key:days.keyMessage });
+      }
+    }
+    // ② 提出後フィードバック未返却遅延
+    if (s.status === 'pending' && s.submittedAt) {
+      const elapsed = daysSince(s.submittedAt);
+      if (elapsed !== null && elapsed >= ALERT_DAYS) {
+        alerts.push({ type:'feedback-overdue', day:d, elapsed, label:`Day ${d}`, key:days.keyMessage });
+      }
+    }
+  }
+  return alerts;
+}
+
+function elapsedLabel(elapsed) {
+  if (elapsed === null) return '';
+  const d = Math.floor(elapsed);
+  const h = Math.floor((elapsed % 1) * 24);
+  if (d >= 1) return `${d}日${h > 0 ? h+'時間' : ''}経過`;
+  return `${h}時間経過`;
+}
+
+function alertBannerHTML(a) {
+  const eLabel = elapsedLabel(a.elapsed);
+  if (a.type === 'feedback-overdue') {
+    return `<div class="alert-banner alert-danger">
+      <div class="alert-icon">⚠</div>
+      <div>
+        <div class="alert-title">フィードバック未返却<span class="alert-days">${eLabel}</span></div>
+        <div class="alert-body"><strong>Day ${a.day}</strong>「${a.key.slice(0,20)}…」が提出から${eLabel}返却されていません。早めにフィードバックをお願いします。</div>
+      </div>
+    </div>`;
+  }
+  if (a.type === 'staff-overdue') {
+    return `<div class="alert-banner alert-warn">
+      <div class="alert-icon">⏰</div>
+      <div>
+        <div class="alert-title">下書き保存のまま未提出<span class="alert-days">${eLabel}</span></div>
+        <div class="alert-body"><strong>Day ${a.day}</strong>「${a.key.slice(0,20)}…」が下書き保存されたまま提出されていません。</div>
+      </div>
+    </div>`;
+  }
+  return '';
+}
+
+function switchMode(mode){
+  currentMode=mode;
+          renderMain();
+}
+
+function selectDay(day){
+  currentDay=day;
+  document.querySelectorAll('.sidebar-item').forEach((el,i)=>el.classList.toggle('active',i+1===day));
+  renderMain();
+}
+
+function updateDot(day){document.getElementById('dot'+day).className='sidebar-status status-'+state[day].status;}
+
+function renderMain(){
+  document.getElementById('mainArea')[currentMode==='manager'?'innerHTML':'innerHTML']='';
+  renderStaffView();
+  // Topbar alert dot
+  const existingDot = document.getElementById('topbarAlertDot');
+  if (existingDot) existingDot.remove();
+  if (getAlerts().length > 0) {
+    const dot = document.createElement('div');
+    dot.id = 'topbarAlertDot';
+    dot.className = 'topbar-alert-dot';
+    dot.title = `未対応のアラートが ${getAlerts().length} 件あります`;
+      }
+}
+
+function renderStaffView(){
+  const main=document.getElementById('mainArea');
+  const day=DAYS[currentDay],s=state[currentDay];
+  const lbl={none:'未提出',draft:'下書き保存中',pending:'上長確認待ち',done:'フィードバック受取済'};
+  const sub=s.status==='pending'||s.status==='done';
+  const staffAlerts = getAlerts().filter(a => a.day === currentDay);
+  const staffAlertHTML = staffAlerts.map(alertBannerHTML).join('');
+  main.innerHTML=`
+    <div class="status-bar ${s.status}"><div class="status-dot"></div><span>${lbl[s.status]}</span></div>
+    ${staffAlertHTML}
+    <div class="day-card">
+      <div class="day-header">
+        <div class="day-num-block"><div class="day-label">Day</div><div class="day-num">0${currentDay}</div></div>
+        <div class="chapter-badge">${day.chapter}</div>
+      </div>
+      <div class="key-message">${day.keyMessage}</div>
+      <div class="day-body">
+        <div class="insight-block"><div class="insight-label">Today's Insight</div><div class="insight-text">${day.insight}</div></div>
+        <div class="enriched-block"><div class="enriched-label">深掘り考察</div><div class="enriched-text">${day.enriched}</div></div>
+        <div class="action-block"><div class="action-label">Today's Action　今日の実践</div><div class="action-text">${day.action}</div></div>
+        <div class="write-section">
+          <div class="write-block">
+            <div class="write-label-bar">今日のコラムで感じたこと・考えたこと</div>
+            <textarea class="write-input" id="inputThought" placeholder="自由に書いてください…" ${sub?'disabled':''}>${s.thought}</textarea>
+          </div>
+          <div class="write-block">
+            <div class="write-label-bar">本日の日報・気付き・改善提案</div>
+            <textarea class="write-input" id="inputReport" placeholder="今日の気付きや改善案を…" ${sub?'disabled':''}>${s.report}</textarea>
+          </div>
+          ${s.status==='done'?`<div class="done-feedback"><div class="done-label">✓ 上長からのフィードバック</div><div class="done-text">${s.managerFeedback}</div></div>`
+          :s.status==='pending'?`<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;margin-top:4px;"><div style="font-size:11px;font-weight:700;color:#1d4ed8;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">上長が確認・フィードバック中…</div><div style="font-size:12px;color:#3b82f6;">しばらくお待ちください。返却されたら通知が届きます。</div></div>`:''}
+          ${!sub?`<div class="btn-row"><button class="btn btn-outline" onclick="saveDraft()">下書き保存</button><button class="btn btn-primary" onclick="submitStaff()">▶ 提出する</button></div>`
+          :s.status==='done'?`<div class="btn-row"><button class="btn btn-outline" onclick="nextDay()">次の日へ →</button></div>`:''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderManagerView(){
+  const main=document.getElementById('mainArea');
+  const hasPending=Object.keys(state).some(d=>state[d].status==='pending');
+  if(!hasPending&&state[currentDay].status!=='pending'){
+    main.innerHTML=`
+      <div style="margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div><div style="font-size:17px;font-weight:500;color:var(--text);margin-bottom:4px;">スタッフの提出状況</div>
+        <div style="font-size:12px;color:var(--text-soft);">提出済みのDayを選んでフィードバックしてください</div></div>
+        <button class="btn btn-outline" style="font-size:11px;padding:6px 12px;" onclick="reloadFromSheet()">↻ 最新データを取得</button>
+      </div>
+      ${staffBanner()}
+      ${getAlerts().map(alertBannerHTML).join('')}
+      <div class="mgr-list">
+        ${Array.from({length:77},(_,i)=>i+1).map(d=>{
+          const ds=state[d];
+          const tc=ds.status==='pending'?'tag-pending':ds.status==='done'?'tag-done':'tag-none';
+          const tt=ds.status==='pending'?'要フィードバック':ds.status==='done'?'返却済':'未提出';
+          return `<div class="mgr-list-item" onclick="selectDay(${d})">
+            <div class="mgr-day-num">${String(d).padStart(2,'0')}</div>
+            <div class="mgr-item-info">
+              <div class="mgr-item-who">${profile.clinic}　${profile.job}　${profile.name}</div>
+              <div class="mgr-item-key">${DAYS[d].keyMessage}</div>
+            </div>
+            <div class="mgr-status-tag ${tc}">${tt}</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    return;
+  }
+  if(state[currentDay].status==='none'||state[currentDay].status==='draft'){
+    main.innerHTML=`<div style="font-size:14px;color:var(--text-soft);padding:40px;text-align:center;">このDayはまだ提出されていません。<br><br><button class="btn btn-outline" onclick="currentMode='manager';renderManagerView();">← 一覧に戻る</button></div>`;
+    return;
+  }
+  const day=DAYS[currentDay],s=state[currentDay];
+  main.innerHTML=`
+    <div style="margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+      <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick="currentMode='manager';renderManagerView();">← 一覧</button>
+      <div style="font-size:14px;font-weight:500;color:var(--text);">Day 0${currentDay} — 提出内容の確認</div>
+    </div>
+    ${staffBanner()}
+    ${getAlerts().filter(a=>a.day===currentDay).map(alertBannerHTML).join('')}
+    <div class="day-card">
+      <div class="day-header">
+        <div class="day-num-block"><div class="day-label">Day</div><div class="day-num">0${currentDay}</div></div>
+        <div class="chapter-badge">${day.chapter}</div>
+      </div>
+      <div class="key-message">${day.keyMessage}</div>
+      <div class="day-body">
+        <div class="write-section" style="border-top:none;padding-top:0;">
+          <div class="write-block">
+            <div class="write-label-bar">感じたこと・考えたこと（${profile.name}）</div>
+            <textarea class="write-input" disabled style="background:#f8fcfd;">${s.thought}</textarea>
+          </div>
+          <div class="write-block">
+            <div class="write-label-bar">日報・気付き・改善提案（${profile.name}）</div>
+            <textarea class="write-input" disabled style="background:#f8fcfd;">${s.report}</textarea>
+          </div>
+          ${s.status==='done'?`<div class="done-feedback"><div class="done-label">✓ 送信済みのフィードバック</div><div class="done-text">${s.managerFeedback}</div></div>`:`
+          <div class="manager-panel">
+            <div class="manager-panel-title">▼ 上長フィードバックパネル</div>
+            <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;">スタッフの記入内容を読んで、フィードバックを入力してGOを押してください。</div>
+            <div class="write-label-bar">上長フィードバック</div>
+            <textarea class="feedback-input" id="managerFeedbackInput" placeholder="${profile.name}さんへのフィードバックを入力してください…"></textarea>
+            <div class="btn-row">
+              <button class="btn btn-green" onclick="sendFeedback()">✓ GO — ${profile.name}さんに送信</button>
+            </div>
+          </div>`}
+        </div>
+      </div>
+    </div>`;
+}
+
+function saveDraft(){
+  state[currentDay].thought=document.getElementById('inputThought')?.value||'';
+  state[currentDay].report=document.getElementById('inputReport')?.value||'';
+  state[currentDay].status='draft';
+  updateDot(currentDay);persistSave();renderMain();
+  gasPost({ action:'draft', ...profile, day:currentDay,
+    thought:state[currentDay].thought, report:state[currentDay].report })
+    .then(r => showSaveIndicator(r.ok ? '下書きを保存しました' : '保存に失敗しました（オフライン保存済）', !r.ok));
+}
+
+function submitStaff(){
+  const t=document.getElementById('inputThought')?.value||'';
+  const r=document.getElementById('inputReport')?.value||'';
+  if(!t.trim()&&!r.trim()){alert('記入してから提出してください。');return;}
+  state[currentDay].thought=t;state[currentDay].report=r;
+  state[currentDay].status='pending';
+  state[currentDay].submittedAt=Date.now();
+  updateDot(currentDay);persistSave();renderMain();
+  gasPost({ action:'submit', ...profile, day:currentDay,
+    thought:state[currentDay].thought, report:state[currentDay].report, staffEmail:profile.email })
+    .then(r => showSaveIndicator(r.ok ? '提出しました' : '提出できませんでした（オフライン保存済）', !r.ok));
+}
+
+async function generateAIDraft(){
+  state[currentDay]._generating=true;state[currentDay].aiDraft='';renderMain();
+  const s=state[currentDay];
+  try{
+    const res=await gasPost({
+      action:'generateAI',
+      clinic:profile.clinic, job:profile.job, name:profile.name,
+      day:currentDay, thought:s.thought, report:s.report
+    });
+    if(res.ok && res.draft){
+      state[currentDay].aiDraft=res.draft;
+    } else {
+      state[currentDay].aiDraft='AIの接続に問題がありました。直接フィードバックを入力してください。';
+    }
+  }catch(e){state[currentDay].aiDraft='AIの接続に問題がありました。直接フィードバックを入力してください。';}
+  state[currentDay]._generating=false;renderMain();
+  if(state[currentDay].aiDraft && state[currentDay].aiDraft !== 'AIの接続に問題がありました。直接フィードバックを入力してください。') {
+    gasPost({ action:'saveAiDraft', clinic:profile.clinic, name:profile.name,
+      day:currentDay, aiDraft:state[currentDay].aiDraft });
+  }
+}
+
+function sendFeedback(){
+  const inp=document.getElementById('managerFeedbackInput');
+  const fb=inp?inp.value.trim():state[currentDay].aiDraft;
+  if(!fb){alert('フィードバックを入力してください。');return;}
+  state[currentDay].managerFeedback=fb;state[currentDay].status='done';
+  state[currentDay].feedbackAt=Date.now();
+  updateDot(currentDay);persistSave();showEmailPreview(fb);
+  gasPost({ action:'feedback', clinic:profile.clinic, name:profile.name, day:currentDay,
+    aiDraft:state[currentDay].aiDraft, feedback:fb })
+    .then(r => showSaveIndicator(r.ok ? 'フィードバックを保存しました' : '保存に失敗しました（オフライン保存済）', !r.ok));
+}
+
+function showEmailPreview(fb){
+  const day=DAYS[currentDay];
+  const to=profile.email?`${profile.name} <${profile.email}>`:`${profile.name}（メール未登録）`;
+  document.getElementById('emailTo').textContent=to;
+  document.getElementById('emailSubject').textContent=`【MMG研修】Day 0${currentDay} フィードバックが届きました`;
+  document.getElementById('emailContent').textContent=
+`${profile.name} さん、お疲れ様です。
+
+Day 0${currentDay}「${day.keyMessage}」の提出内容を確認しました。
+
+── 上長からのフィードバック ──
+${fb}
+──────────────────────
+
+【提出者情報】
+氏名：${profile.name}
+クリニック：${profile.clinic}
+職種：${profile.job}
+
+引き続き日めくりノートに取り組んでください。
+
+MIRAI MEDICAL GROUP 研修システム`;
+  document.getElementById('emailOverlay').classList.add('show');
+  renderMain();
+}
+
+function closeEmail(){document.getElementById('emailOverlay').classList.remove('show');}
+
+function toggleSidebar(){
+  const sb = document.getElementById('sidebarEl');
+  sb.classList.toggle('open');
+}
+// Show mobile menu bar on small screens
+function checkMobile(){
+  const bar = document.getElementById('mobileMenuBar');
+  if(bar) bar.style.display = window.innerWidth <= 640 ? 'block' : 'none';
+}
+window.addEventListener('resize', checkMobile);
+window.addEventListener('DOMContentLoaded', checkMobile);
+
+function nextDay(){if(currentDay<77)selectDay(currentDay+1);}
+
+async function reloadFromSheet() {
+  showSaveIndicator('最新データを取得中…');
+  const sheetData = await gasLoad(profile.clinic, profile.name);
+  if (sheetData) {
+    applySheetData(sheetData);
+    for (let d=1;d<=77;d++) updateDot(d);
+    renderMain();
+    showSaveIndicator('データを更新しました');
+  } else {
+    showSaveIndicator('取得できませんでした（GAS URL を確認してください）', true);
+  }
+}
+
+// ── INTRO STEPS ──
+const INTRO_STEPS = [
+  { title: 'あなたのことを\n教えてください', label: 'Step 1 / 6　基本情報' },
+  { title: 'あなたが幸せを感じる\n瞬間はいつですか？', label: 'Step 2 / 6　幸せの欲求' },
+  { title: 'あなたが描く\nなりたい自分像', label: 'Step 3 / 6　未来ビジョン' },
+  { title: '何のために\n働いていますか？', label: 'Step 4 / 6　働く目的' },
+  { title: 'この会社での\nキャリア目標', label: 'Step 5 / 6　キャリア目標' },
+  { title: '石工の話\n〜どの石工に近いですか？', label: 'Step 6 / 6　ドラッカーの問い' },
+];
+let introStep = 1;
+const introData = {};
+
+function initIntroProgress() {
+  const prog = document.getElementById('introProgress');
+  prog.innerHTML = INTRO_STEPS.map((_, i) =>
+    `<div class="intro-progress-dot" id="ipd${i+1}" onclick="introJump(${i+1})"></div>`
+  ).join('');
+}
+
+function updateIntroUI() {
+  const s = INTRO_STEPS[introStep - 1];
+  document.getElementById('introStepLabel').textContent = s.label;
+  document.getElementById('introCardTitle').textContent = s.title;
+  document.getElementById('introStepNum').textContent = introStep;
+  document.querySelectorAll('.intro-section').forEach(el => el.classList.remove('active'));
+  document.getElementById('intro-step-' + introStep)?.classList.add('active');
+  document.getElementById('introBtnBack').style.display = introStep > 1 ? '' : 'none';
+  document.getElementById('introBtnNext').textContent = introStep === INTRO_STEPS.length ? '研修ノートへ進む →' : '次へ →';
+  for (let i = 1; i <= INTRO_STEPS.length; i++) {
+    const dot = document.getElementById('ipd' + i);
+    dot.className = 'intro-progress-dot' + (i === introStep ? ' active' : i < introStep ? ' done' : '');
+  }
+}
+
+function introNext() {
+  if (introStep < INTRO_STEPS.length) {
+    introStep++;
+    updateIntroUI();
+    document.querySelector('.intro-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    finishIntro();
+  }
+}
+
+function introBack() {
+  if (introStep > 1) { introStep--; updateIntroUI(); }
+}
+
+function introJump(n) {
+  if (n <= introStep) { introStep = n; updateIntroUI(); }
+}
+
+function skipIntro() {
+  finishIntro();
+}
+
+function finishIntro() {
+  document.getElementById('introScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  renderMain();
+}
+
+function launchIntro() {
+  initIntroProgress();
+  updateIntroUI();
+  document.getElementById('profileScreen').style.display = 'none';
+  document.getElementById('introScreen').style.display = 'flex';
+}
+
+
+// ── データ永続化（Google Sheets + localStorage フォールバック） ──
+
+// localStorageにプロフィールだけ保存（端末識別用）
+function persistSave() {
+  try { localStorage.setItem('mmg_profile', JSON.stringify(profile)); } catch(e) {}
+}
+function persistClear() {
+  try { localStorage.removeItem('mmg_profile'); localStorage.removeItem('mmg_state'); } catch(e) {}
+}
+
+// GAS への送信ラッパー
+async function gasPost(payload) {
+  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzoPip5yxHHSnbEaKqyCdKQMuP-bPmD_vnlVWMZ31RcEth3vyS6cA7ZVQla8xyGJaIk/exec') {
+    // GAS未設定時はlocalStorage fallback
+    try { localStorage.setItem('mmg_state', JSON.stringify(state)); } catch(e) {}
+    return { ok: true, offline: true };
+  }
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return await res.json();
+  } catch(e) {
+    console.warn('GAS fetch error:', e);
+    try { localStorage.setItem('mmg_state', JSON.stringify(state)); } catch(e2) {}
+    return { ok: false, offline: true };
+  }
+}
+
+// GAS からデータ取得
+async function gasLoad(clinic, name) {
+  if (!GAS_URL || GAS_URL === 'https://script.google.com/macros/s/AKfycbzoPip5yxHHSnbEaKqyCdKQMuP-bPmD_vnlVWMZ31RcEth3vyS6cA7ZVQla8xyGJaIk/exec') return null;
+  try {
+    const url = `${GAS_URL}?clinic=${encodeURIComponent(clinic)}&name=${encodeURIComponent(name)}`;
+    const res = await fetch(url);
+    const json = await res.json();
+    if (json.ok && json.data) return json.data;
+  } catch(e) { console.warn('GAS load error:', e); }
+  return null;
+}
+
+// シートデータをstateに反映
+function applySheetData(data) {
+  for (let day=1;day<=77;day++) {
+    const d = data[day];
+    if (!d) continue;
+    state[day].thought          = d.thought      || '';
+    state[day].report           = d.report       || '';
+    state[day].status           = d.status       || 'none';
+    state[day].submittedAt      = d.submittedAt  || null;
+    state[day].aiDraft          = d.aiDraft      || '';
+    state[day].managerFeedback  = d.feedback     || '';
+    state[day].feedbackAt       = d.feedbackAt   || null;
+  }
+}
+
+// セーブ状態インジケーターを表示
+function showSaveIndicator(msg, isError) {
+  let el = document.getElementById('saveIndicator');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'saveIndicator';
+    el.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--teal-deep);color:white;font-size:11px;padding:6px 16px;border-radius:20px;z-index:999;transition:opacity 0.4s;font-family:"Noto Sans JP",sans-serif;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.background = isError ? '#c0392b' : 'var(--teal-deep)';
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 2200);
+}
+
+// 初回ロード
+window.addEventListener('DOMContentLoaded', async () => {
+  // プロフィールをlocalStorageから復元
+  let hasProfile = false;
+  try {
+    const p = localStorage.getItem('mmg_profile');
+    if (p) {
+      Object.assign(profile, JSON.parse(p));
+      hasProfile = !!(profile.name && profile.clinic);
+    }
+  } catch(e) {}
+
+  if (!hasProfile) return; // プロフィール未登録 → プロフィール画面表示のまま
+
+  applyProfileToUI();
+
+  // GASからstateを復元
+  showSaveIndicator('データを読み込み中…');
+  const sheetData = await gasLoad(profile.clinic, profile.name);
+  if (sheetData) {
+    applySheetData(sheetData);
+    showSaveIndicator('データを復元しました');
+  } else {
+    // fallback: localStorage
+    try {
+      const s = localStorage.getItem('mmg_state');
+      if (s) {
+        const loaded = JSON.parse(s);
+        for (let d=1;d<=77;d++) {
+          if (loaded[d]) Object.assign(state[d], loaded[d]);
+        }
+      }
+    } catch(e) {}
+  }
+
+  for (let d=1;d<=77;d++) updateDot(d);
+  document.getElementById('profileScreen').style.display = 'none';
+  document.getElementById('introScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  renderMain();
+});
+
+</script>
+
+<!-- FOOTER -->
+<div style="background:var(--teal-deep);color:rgba(255,255,255,0.4);font-size:10px;text-align:center;padding:14px;font-family:'Inter',sans-serif;letter-spacing:0.06em;">
+  MIRAI MEDICAL GROUP｜研修日めくりノート 1on1 システム　© 2025 MMG. All rights reserved.
+</div>
+
+</body>
+</html>
